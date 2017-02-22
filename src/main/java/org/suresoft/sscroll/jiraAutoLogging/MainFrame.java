@@ -1,5 +1,8 @@
 package org.suresoft.sscroll.jiraAutoLogging;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.GridLayout;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,47 +13,76 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
 import org.suresoft.sscroll.jiraAutoLogging.control.CharsetDetector;
-import org.suresoft.sscroll.jiraAutoLogging.control.ServerArbiter;
 import org.suresoft.sscroll.jiraAutoLogging.entity.LoggerInfo;
 import org.suresoft.sscroll.jiraAutoLogging.entity.LoggingData;
 
-public class Starter {
+public class MainFrame extends JFrame {
 
-	private static final String[] CHARSETS_CONCERNS = new String[] { "UTF-8" };
-	private static final String FILE_NAME = "sample.txt";
+	private static final String TITLE = "Jira logging client";
 	
-	public static void main(String[] args) throws Exception {
+	private static final String[] CHARSETS_CONCERNS = new String[] { "UTF-8" };
+
+	
+
+	private JButton button;
+	
+	public MainFrame() {
+		super(TITLE);
+
+		// basic setting
+		setLayout(new GridLayout(0, 1));
+		setSize(400, 600);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-//		UserData userData = new UserData();
-//
-//		List<String> inputData = Input(); // 데이터를 입력받음
-//		LoggingData loggingData = makeData(inputData, userData); // 필요한 정보를 입력
-//		
-//		
-//		
-//		ServerArbiter serverArbiter = new ServerArbiter();
-//		serverArbiter.setJiraServer(userData.getAddress(), userData.getPort());
-//		serverArbiter.getAuth(userData.getId(), userData.getPw());
-//		
-//		JSONArray jArray = JsonParser.makeJsonArray(loggingData);
-//
-//		for (int i = 0; i < jArray.size(); i++) {
-//			JSONObject jObj = (JSONObject) jArray.get(i);
-//			serverArbiter.sendPost(jObj.toJSONString());
-//		}
-		
-		ServerArbiter serverArbiter = new ServerArbiter();
-		serverArbiter.setJiraServer("211.116.223.80", "8080");
-		
-		LoggerInfo userData = getUserData();
-		serverArbiter.makeSession(userData);
-		
-		LoggingData loggingData = getLoggingData();
-		serverArbiter.sendPost(loggingData);
+		Container mainContainer = this.getContentPane();
+		mainContainer.add(buildServerField());
+		mainContainer.add(buildLoggerField());
+		mainContainer.add(buildLoggingDataField());
+
+		setVisible(true);
 	}
 
-	private static LoggerInfo getUserData() {
+	private JComponent buildServerField() {
+		JPanel panel = new JPanel();
+
+		panel.add(new JLabel("IP : "));
+		panel.add(new JTextField(9));
+		panel.add(new JLabel("Port : "));
+		panel.add(new JTextField(4));
+
+		return panel;
+	}
+
+	private Component buildLoggerField() {
+		JPanel panel = new JPanel();
+		
+		JButton makeSessionButton = new JButton("Make Session");
+		makeSessionButton.setMnemonic('S');
+		
+		panel.add(makeSessionButton);
+		
+		return panel;
+	}
+
+	private Component buildLoggingDataField() {
+		JPanel panel = new JPanel();
+		panel.add(new JButton("3"));
+		return panel;
+	}
+	
+	
+	
+	private LoggerInfo getUserData() {
 		LoggerInfo sessionData = new LoggerInfo();
 		
 		// TODO, do something, it's just a stub
@@ -60,15 +92,7 @@ public class Starter {
 		return sessionData;
 	}
 
-	/*
-	 * Res 1h 
-	 * Key TP-17 
-	 * Name dskim/최현진
-	 * DateStarted 2016-12-20 
-	 * TimeSpent 1h
-	 * Comment 된당
-	 */
-	private static LoggingData getLoggingData() {
+	private LoggingData getLoggingData() {
 		LoggingData loggingData = new LoggingData();
 		
 		// TODO, do something, it's just a stub
@@ -90,14 +114,14 @@ public class Starter {
 		List<String> inputdata = new ArrayList<String>();
 		
 		try {
-			File inFile = new File(FILE_NAME); // input.txt 입력 받음
+			File inFile = new File("input.txt"); // input.txt ?��?�� 받음
 			CharsetDetector cd = new CharsetDetector();
 			Charset charset = cd.detectCharset(inFile, CHARSETS_CONCERNS);
 			
 			BufferedReader bufferedReader = null;
-			if(charset != null) { // UTF-8일때
+			if(charset != null) { // UTF-8?��?��
 				bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(inFile), charset));
-			} else { // MS949일때
+			} else { // MS949?��?��
 				bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(inFile), "MS949"));
 			}
 			
@@ -155,7 +179,7 @@ public class Starter {
 
 	private static int makeTimeBySeconds(String[] split) {
 		int time = 0;
-		// 시간과 분을 초단위로 변환
+		// ?��간과 분을 초단?���? �??��
 		for (int j = 0; j < split.length; ++j) {
 			if (split[j].charAt(split[j].length() - 1) == 'h'
 					|| split[j].charAt(split[j].length() - 1) == 'H') {
@@ -170,4 +194,35 @@ public class Starter {
 		return time;
 	}
 
+	public static void main(String[] args) throws Exception {
+		
+		new MainFrame();
+		
+//		UserData userData = new UserData();
+//
+//		List<String> inputData = Input(); // ?��?��?���? ?��?��받음
+//		LoggingData loggingData = makeData(inputData, userData); // ?��?��?�� ?��보�?? ?��?��
+//		
+//		
+//		
+//		ServerArbiter serverArbiter = new ServerArbiter();
+//		serverArbiter.setJiraServer(userData.getAddress(), userData.getPort());
+//		serverArbiter.getAuth(userData.getId(), userData.getPw());
+//		
+//		JSONArray jArray = JsonParser.makeJsonArray(loggingData);
+//
+//		for (int i = 0; i < jArray.size(); i++) {
+//			JSONObject jObj = (JSONObject) jArray.get(i);
+//			serverArbiter.sendPost(jObj.toJSONString());
+//		}
+		
+/*		ServerArbiter serverArbiter = new ServerArbiter();
+		serverArbiter.setJiraServer("211.116.223.80", "8080");
+		
+		LoggerInfo userData = getUserData();
+		serverArbiter.makeSession(userData);
+		
+		LoggingData loggingData = getLoggingData();
+		serverArbiter.sendPost(loggingData);*/
+	}
 }
