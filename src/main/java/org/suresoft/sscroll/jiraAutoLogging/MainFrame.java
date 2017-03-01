@@ -2,28 +2,24 @@ package org.suresoft.sscroll.jiraAutoLogging;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.nio.charset.Charset;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -34,11 +30,15 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-import org.json.simple.parser.ParseException;
-import org.suresoft.sscroll.jiraAutoLogging.control.CharsetDetector;
 import org.suresoft.sscroll.jiraAutoLogging.control.ServerArbiter;
 import org.suresoft.sscroll.jiraAutoLogging.entity.LoggerInfo;
 import org.suresoft.sscroll.jiraAutoLogging.entity.LoggingData;
+
+import net.sourceforge.jdatepicker.DateModel;
+import net.sourceforge.jdatepicker.JDatePicker;
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
 public class MainFrame extends JFrame implements ActionListener {
 
@@ -57,7 +57,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
 	private JTextField issueKeyTextField;
 	private JTextArea nameListTextArea;
-	private JTextField dateTextField;
+	private JDatePickerImpl datePicker;
 	private JTextField timeSpentTextField;
 	private JTextArea commentTextArea;
 	
@@ -108,7 +108,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	private Component buildLoggingDataField() {
 		issueKeyTextField = new JTextField(8);
 		nameListTextArea = new JTextArea(2, 13);
-		dateTextField = new JTextField(8);
+		datePicker = buildDatePicker();
 		timeSpentTextField = new JTextField(8);
 		commentTextArea = new JTextArea(3, 15);
 		
@@ -116,13 +116,48 @@ public class MainFrame extends JFrame implements ActionListener {
 		loggingDataPanel.setBorder(buildTitleBorder("Logging Data"));
 		loggingDataPanel.add(buildPanelWithLabel("Issue key : ", issueKeyTextField));
 		loggingDataPanel.add(buildPanelWithLabel("Name List(split by \" \") : ", nameListTextArea));
-		loggingDataPanel.add(buildPanelWithLabel("Date : ", dateTextField));
+		loggingDataPanel.add(buildPanelWithLabel("Date : ", datePicker));
 		loggingDataPanel.add(buildPanelWithLabel("Time Spent : ", timeSpentTextField));
 		loggingDataPanel.add(buildPanelWithLabel("Comment : ", commentTextArea));
 		
 		return loggingDataPanel;
 	}
 
+	private JDatePickerImpl buildDatePicker() {
+		UtilDateModel utilDateModel = new UtilDateModel();
+		utilDateModel.setSelected(true);	// set the today
+
+		JDatePanelImpl datePanel = new JDatePanelImpl(utilDateModel);
+		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+		
+		return datePicker;
+	}
+
+	// Mar 1, 2017 -> 2017-03-01
+	private class DateLabelFormatter extends AbstractFormatter {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private String datePattern = "yyyy-MM-dd";
+	    private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
+		
+		@Override
+		public Object stringToValue(String text) throws ParseException {
+			return dateFormatter.parseObject(text);
+		}
+
+		@Override
+		public String valueToString(Object value) throws ParseException {
+			if (value != null) {
+	            Calendar cal = (Calendar) value;
+	            return dateFormatter.format(cal.getTime());
+	        }
+			return "";
+		}
+	}
+	
 	private Component buildButtonField() {
 		JButton logWorkButton = new JButton("Log Work");
 		logWorkButton.addActionListener(this);
@@ -163,10 +198,10 @@ public class MainFrame extends JFrame implements ActionListener {
 	public void actionPerformed(final ActionEvent event) {
 		try {
 			String ip = ipTextField.getText();
-			String password = portTextField.getText();
-			serverArbiter.setJiraServer(ip, password);
+			String port = portTextField.getText();
+			serverArbiter.setJiraServer(ip, port);
 			
-			System.out.println("ip : " + ip + " , password : " + password);
+			System.out.println("ip : " + ip + " , port : " + port);
 			
 			LoggerInfo loggerInfo = getLoggerInfo();
 //			serverArbiter.makeSession(loggerInfo);
@@ -194,14 +229,13 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	private LoggerInfo getLoggerInfo() {
 		LoggerInfo loggerInfo = new LoggerInfo();
 		
 		loggerInfo.setId(autherTextField.getText());
-		loggerInfo.setPassword(passwordTextField.getText());
+		loggerInfo.setPassword(new String(passwordTextField.getPassword()));
 		
-		System.out.println("author : " + loggerInfo.getId() + " , logger pw : " + loggerInfo.getPassword());
+		System.out.println("Author : " + loggerInfo.getId() + " , password : " + loggerInfo.getPassword());
 		
 		return loggerInfo;
 	}
@@ -212,11 +246,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		loggingData.setIssuekey(issueKeyTextField.getText());
 //		loggingData.setRemainingEstimateSeconds(0);
 		
-		String[] nameListArray = nameListTextArea.getText().split(" ");
-		List<String> nameList = new ArrayList<String>(Arrays.asList(nameListArray));
-		loggingData.setNameList(nameList);
-		
-		loggingData.setDateStarted(dateTextField.getText());
+		loggingData.setNameList(getNameList());
+		loggingData.setDateStarted(getDate());
 		String timeSpent = timeSpentTextField.getText();
 		loggingData.setTimeSpentSeconds(makeTimeBySeconds(timeSpent));
 		loggingData.setComment(commentTextArea.getText());
@@ -233,8 +264,29 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		return loggingData;
 	}
+
+	private List<String> getNameList() {
+		String[] nameListArray = nameListTextArea.getText().split(" ");
+		List<String> nameList = new ArrayList<String>(Arrays.asList(nameListArray));
+		return nameList;
+	}
+
+	private String getDate() {
+		DateModel<?> dateModel = datePicker.getModel();
+		int year = dateModel.getYear();
+		int month = dateModel.getMonth() + 1;
+		int day = dateModel.getDay();
+		
+		String date = year + "-" + (month < 10 ? "0" : "") + month + "-" + (day < 10 ? "0" : "") + day;
+		
+		return date;
+	}
 	
 	private int makeTimeBySeconds(final String time) {
+		if( time.equals("") ) {
+			return 0;
+		}
+		
 		String[] splits = time.split(" ");
 		
 		int timeBySeconds = 0;
