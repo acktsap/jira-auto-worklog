@@ -58,7 +58,7 @@ public class ServerArbiter {
 		this.sessionValue = sessionValue;
 	}
 	
-	public void makeSession(final LoggerInfo userData) throws Exception {
+	public void makeSession(final LoggerInfo userData) throws UnsupportedEncodingException, IOException, ParseException {
 		// 반드시 '모든 작업기록 수정', 'Log work for Others' 권한이 있는 사용자만이 다른 사용자의 Log work를 할 수 있다.!!!!(중요)
 		HttpURLConnection httpConnection = makeSessionConnection();
 		JSONObject jsonSessionData = jiraLogJsonParser.toJsonObject(userData);
@@ -77,7 +77,7 @@ public class ServerArbiter {
 		}
 	}
 	
-	public void sendPost(final LoggingData loggingData) throws Exception {
+	public void sendPost(final LoggingData loggingData) throws MalformedURLException, ProtocolException, IOException {
 		HttpURLConnection httpConnection = makeWorkLogConnection();
 		JSONArray loggingJsonArrayData = jiraLogJsonParser.toJsonArray(loggingData);
 		
