@@ -2,7 +2,6 @@ package org.suresoft.sscroll.jiraAutoLogging;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -12,7 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -35,7 +33,6 @@ import org.suresoft.sscroll.jiraAutoLogging.entity.LoggerInfo;
 import org.suresoft.sscroll.jiraAutoLogging.entity.LoggingData;
 
 import net.sourceforge.jdatepicker.DateModel;
-import net.sourceforge.jdatepicker.JDatePicker;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
@@ -180,6 +177,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		Border border = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
 		TitledBorder titleBorder = BorderFactory.createTitledBorder(border, title);
 		titleBorder.setTitleJustification(TitledBorder.LEFT);
+		
 		return titleBorder;
 	}
 	
@@ -189,7 +187,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		for( Component component : components) {
 			panel.add(component);
 		}
-		
 		return panel;
 	}
 
