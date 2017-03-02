@@ -16,7 +16,7 @@ public class JiraLogJsonParser extends JSONParser {
 	private static final String JSON_SESSION_VALUE = "value";
 	
 	private static final String JSON_AUTHOR = "author";
-	private static final String JSON_AUTHOR_NAME = JSON_SESSION_NAME;
+	private static final String JSON_AUTHOR_NAME = "name";
 	
 	private static final String JSON_ISSUE = "issue";
 	private static final String JSON_ISSUE_KEY = "key";

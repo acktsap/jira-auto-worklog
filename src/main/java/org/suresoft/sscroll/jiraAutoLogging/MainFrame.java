@@ -6,6 +6,11 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.rmi.ConnectException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +34,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import org.suresoft.sscroll.jiraAutoLogging.control.ServerArbiter;
+import org.suresoft.sscroll.jiraAutoLogging.control.XmlFileController;
 import org.suresoft.sscroll.jiraAutoLogging.entity.LoggerInfo;
 import org.suresoft.sscroll.jiraAutoLogging.entity.LoggingData;
 
@@ -43,6 +49,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	 * 
 	 */
 	private static final long serialVersionUID = 3279630073848170157L;
+	private static final String FILE_NAME = "information.xml";
 	private static final String TITLE = "Jira logging";
 	
 	private ServerArbiter serverArbiter;
@@ -71,7 +78,9 @@ public class MainFrame extends JFrame implements ActionListener {
 		contentPane.add(buildLoggerField());
 		contentPane.add(buildLoggingDataField());
 		contentPane.add(buildButtonField());
-
+		
+		fillDataFromFile();
+		
 		setVisible(true);
 		
 		serverArbiter = new ServerArbiter();
@@ -162,6 +171,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		JButton exitButton = new JButton("Exit");
 		exitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				saveDataToFile();
 				MainFrame.this.dispose();
 			}
 		});
@@ -172,6 +182,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		return panel;
 	}
+
 
 	private TitledBorder buildTitleBorder(final String title) {
 		Border border = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
@@ -190,7 +201,54 @@ public class MainFrame extends JFrame implements ActionListener {
 		return panel;
 	}
 
+	private void fillDataFromFile() {
+		XmlFileController xmlFileController = new XmlFileController(FILE_NAME);
+		xmlFileController.parse();
+		
+		ipTextField.setText(xmlFileController.getValue(XmlFileController.Element.IP));
+		portTextField.setText(xmlFileController.getValue(XmlFileController.Element.PORT));
+		autherTextField.setText(xmlFileController.getValue(XmlFileController.Element.AUTHOR));
+//		passwordTextField.setText(xmlFileParser.getValue(XmlFileParser.Element.IP)); // no password for security
+
+		issueKeyTextField.setText(xmlFileController.getValue(XmlFileController.Element.ISSUE_KEY));
+		nameListTextArea.setText(xmlFileController.getValue(XmlFileController.Element.NAME_LIST));
+		setDate(xmlFileController.getValue(XmlFileController.Element.DATE));
+		timeSpentTextField.setText(xmlFileController.getValue(XmlFileController.Element.TIME_SPENT));
+		commentTextArea.setText(xmlFileController.getValue(XmlFileController.Element.COMMENT));
+	}
 	
+	private void setDate(final String date) {
+		String[] dateInfo = date.split("-");
+		
+		if( dateInfo.length != 3 ) {	// error 
+			return; 
+		}
+		
+		int year = Integer.parseInt(dateInfo[0]);
+		int month = Integer.parseInt(dateInfo[1]) - 1;
+		int day = Integer.parseInt(dateInfo[2]);
+		
+		datePicker.getModel().setYear(year);
+		datePicker.getModel().setMonth(month);
+		datePicker.getModel().setDay(day);
+	}
+
+	private void saveDataToFile() {
+		XmlFileController xmlFileController = new XmlFileController(FILE_NAME);
+		xmlFileController.parse();
+		
+		xmlFileController.setElementValue(XmlFileController.Element.IP, ipTextField.getText());
+		xmlFileController.setElementValue(XmlFileController.Element.PORT, portTextField.getText());
+		xmlFileController.setElementValue(XmlFileController.Element.AUTHOR, autherTextField.getText());
+//		xmlFileController.setElementValue(XmlFileController.Element.PASSWORD, passwordTextField.getText());
+
+		xmlFileController.setElementValue(XmlFileController.Element.ISSUE_KEY, issueKeyTextField.getText());
+		xmlFileController.setElementValue(XmlFileController.Element.NAME_LIST, nameListTextArea.getText());
+		xmlFileController.setElementValue(XmlFileController.Element.DATE, getDate());
+		xmlFileController.setElementValue(XmlFileController.Element.TIME_SPENT, timeSpentTextField.getText());
+		xmlFileController.setElementValue(XmlFileController.Element.COMMENT, commentTextArea.getText());
+	}
+
 	// log work
 	public void actionPerformed(final ActionEvent event) {
 		try {
@@ -201,12 +259,14 @@ public class MainFrame extends JFrame implements ActionListener {
 			System.out.println("ip : " + ip + " , port : " + port);
 			
 			LoggerInfo loggerInfo = getLoggerInfo();
-//			serverArbiter.makeSession(loggerInfo);
+			serverArbiter.makeSession(loggerInfo);
 			
 			LoggingData loggingData = getLoggingData();
-//			serverArbiter.sendPost(loggingData);
+			serverArbiter.sendPost(loggingData);
 			
-		} /*catch (UnsupportedEncodingException e) {
+		} catch (ConnectException e ) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
@@ -215,13 +275,10 @@ public class MainFrame extends JFrame implements ActionListener {
 		} catch (ProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} */catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
