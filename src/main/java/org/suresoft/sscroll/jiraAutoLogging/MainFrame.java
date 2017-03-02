@@ -218,6 +218,10 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 	
 	private void setDate(final String date) {
+		if( date == null ) {
+			return;
+		}
+		
 		String[] dateInfo = date.split("-");
 		
 		if( dateInfo.length != 3 ) {	// error 
@@ -247,6 +251,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		xmlFileController.setElementValue(XmlFileController.Element.DATE, getDate());
 		xmlFileController.setElementValue(XmlFileController.Element.TIME_SPENT, timeSpentTextField.getText());
 		xmlFileController.setElementValue(XmlFileController.Element.COMMENT, commentTextArea.getText());
+		
+		System.out.println("file saved");
 	}
 
 	// log work
