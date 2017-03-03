@@ -59,7 +59,7 @@ public class ServerArbiter {
 	}
 	
 	public void makeSession(final LoggerInfo userData) throws UnsupportedEncodingException, IOException, ParseException {
-		// 반드시 '모든 작업기록 수정', 'Log work for Others' 권한이 있는 사용자만이 다른 사용자의 Log work를 할 수 있다.!!!!(중요)
+		// 諛섎뱶�떆 '紐⑤뱺 �옉�뾽湲곕줉 �닔�젙', 'Log work for Others' 沅뚰븳�씠 �엳�뒗 �궗�슜�옄留뚯씠 �떎瑜� �궗�슜�옄�쓽 Log work瑜� �븷 �닔 �엳�떎.!!!!(以묒슂)
 		HttpURLConnection httpConnection = makeSessionConnection();
 		JSONObject jsonSessionData = jiraLogJsonParser.toJsonObject(userData);
 		
@@ -78,16 +78,17 @@ public class ServerArbiter {
 	}
 	
 	public void sendPost(final LoggingData loggingData) throws MalformedURLException, ProtocolException, IOException {
-		HttpURLConnection httpConnection = makeWorkLogConnection();
 		JSONArray loggingJsonArrayData = jiraLogJsonParser.toJsonArray(loggingData);
 		
 		for (int i = 0; i < loggingJsonArrayData.size(); i++) {
 			JSONObject loggingJsonData = (JSONObject) loggingJsonArrayData.get(i);
+			
+			HttpURLConnection httpConnection = makeWorkLogConnection();
 			sendJsonData(httpConnection, loggingJsonData);
 			
 			System.out.println("Response Code : " + httpConnection.getResponseCode());
-			
-			if(httpConnection.getResponseCode() == VALID_RESPONSE){
+
+			if( httpConnection.getResponseCode() == VALID_RESPONSE ) {
 				String response = getResponse(httpConnection);
 				System.out.println("Response : " + response);
 			}
