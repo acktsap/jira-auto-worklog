@@ -70,6 +70,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
 		// basic setting
 		setSize(400, 500);
+		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		Container contentPane = this.getContentPane();
