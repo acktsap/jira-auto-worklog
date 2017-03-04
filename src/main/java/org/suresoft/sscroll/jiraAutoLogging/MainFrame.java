@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -71,7 +73,14 @@ public class MainFrame extends JFrame implements ActionListener {
 		// basic setting
 		setSize(400, 500);
 		setLocationRelativeTo(null);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(final WindowEvent event) {
+				saveDataToFile();
+				MainFrame.this.dispose();
+			}
+		});
 		
 		Container contentPane = this.getContentPane();
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
@@ -273,16 +282,12 @@ public class MainFrame extends JFrame implements ActionListener {
 		} catch (ConnectException e ) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
