@@ -17,3 +17,7 @@ target/
 
 # settings
 .settings/
+
+# information file
+information.xml
+*/information.xml
