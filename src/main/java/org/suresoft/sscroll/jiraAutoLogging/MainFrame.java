@@ -34,7 +34,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import org.suresoft.sscroll.jiraAutoLogging.control.ServerArbiter;
-import org.suresoft.sscroll.jiraAutoLogging.control.XmlFileController;
+import org.suresoft.sscroll.jiraAutoLogging.control.XmlParser;
 import org.suresoft.sscroll.jiraAutoLogging.entity.LoggerInfo;
 import org.suresoft.sscroll.jiraAutoLogging.entity.LoggingData;
 
@@ -64,7 +64,6 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JDatePickerImpl datePicker;
 	private JTextField timeSpentTextField;
 	private JTextArea commentTextArea;
-	private XmlFileController xmlFileController;
 	
 	public MainFrame() {
 		super(TITLE);
@@ -80,7 +79,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		contentPane.add(buildLoggingDataField());
 		contentPane.add(buildButtonField());
 		
-		xmlFileController = new XmlFileController();
 		fillDataFromFile();
 		
 		setVisible(true);
@@ -99,7 +97,6 @@ public class MainFrame extends JFrame implements ActionListener {
 
 		return panel;
 	}
-
 
 	private Component buildLoggerField() {
 		autherTextField = new JTextField(8);
@@ -204,21 +201,22 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 
 	private void fillDataFromFile() {
-		xmlFileController.load(FILE_NAME);
-		xmlFileController.parse();
+		XmlParser xmlFileController = new XmlParser();
+		xmlFileController.parse(FILE_NAME);
 		
-		ipTextField.setText(xmlFileController.getValue(XmlFileController.Tag.IP));
-		portTextField.setText(xmlFileController.getValue(XmlFileController.Tag.PORT));
-		autherTextField.setText(xmlFileController.getValue(XmlFileController.Tag.AUTHOR));
-//		passwordTextField.setText(xmlFileParser.getValue(XmlFileParser.Element.IP)); // no password for security
+		ipTextField.setText(xmlFileController.getValue(XmlParser.Tag.IP));
+		portTextField.setText(xmlFileController.getValue(XmlParser.Tag.PORT));
+		autherTextField.setText(xmlFileController.getValue(XmlParser.Tag.AUTHOR));
+//		passwordTextField.setText(xmlFileParser.getValue(XmlParser.Tag.PASSWORD)); // no password for security
 
-		issueKeyTextField.setText(xmlFileController.getValue(XmlFileController.Tag.ISSUE_KEY));
-		nameListTextArea.setText(xmlFileController.getValue(XmlFileController.Tag.NAME_LIST));
-		setDate(xmlFileController.getValue(XmlFileController.Tag.DATE));
-		timeSpentTextField.setText(xmlFileController.getValue(XmlFileController.Tag.TIME_SPENT));
-		commentTextArea.setText(xmlFileController.getValue(XmlFileController.Tag.COMMENT));
+		issueKeyTextField.setText(xmlFileController.getValue(XmlParser.Tag.ISSUE_KEY));
+		nameListTextArea.setText(xmlFileController.getValue(XmlParser.Tag.NAME_LIST));
+//		setDate(xmlFileController.getValue(XmlParser.Tag.DATE));	// don't save date
+		timeSpentTextField.setText(xmlFileController.getValue(XmlParser.Tag.TIME_SPENT));
+		commentTextArea.setText(xmlFileController.getValue(XmlParser.Tag.COMMENT));
 	}
 	
+	@SuppressWarnings("unused")
 	private void setDate(final String date) {
 		if( date == null ) {
 			return;
@@ -240,18 +238,20 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 
 	private void saveDataToFile() {
-		xmlFileController.setElementValue(XmlFileController.Tag.IP, ipTextField.getText());
-		xmlFileController.setElementValue(XmlFileController.Tag.PORT, portTextField.getText());
-		xmlFileController.setElementValue(XmlFileController.Tag.AUTHOR, autherTextField.getText());
+		XmlParser xmlParser = new XmlParser();
+		
+		xmlParser.setElementValue(XmlParser.Tag.IP, ipTextField.getText());
+		xmlParser.setElementValue(XmlParser.Tag.PORT, portTextField.getText());
+		xmlParser.setElementValue(XmlParser.Tag.AUTHOR, autherTextField.getText());
 //		xmlFileController.setElementValue(XmlFileController.Element.PASSWORD, passwordTextField.getText());
 
-		xmlFileController.setElementValue(XmlFileController.Tag.ISSUE_KEY, issueKeyTextField.getText());
-		xmlFileController.setElementValue(XmlFileController.Tag.NAME_LIST, nameListTextArea.getText());
-		xmlFileController.setElementValue(XmlFileController.Tag.DATE, getDate());
-		xmlFileController.setElementValue(XmlFileController.Tag.TIME_SPENT, timeSpentTextField.getText());
-		xmlFileController.setElementValue(XmlFileController.Tag.COMMENT, commentTextArea.getText());
+		xmlParser.setElementValue(XmlParser.Tag.ISSUE_KEY, issueKeyTextField.getText());
+		xmlParser.setElementValue(XmlParser.Tag.NAME_LIST, nameListTextArea.getText());
+//		xmlParser.setElementValue(XmlParser.Tag.DATE, getDate());
+		xmlParser.setElementValue(XmlParser.Tag.TIME_SPENT, timeSpentTextField.getText());
+		xmlParser.setElementValue(XmlParser.Tag.COMMENT, commentTextArea.getText());
 		
-		System.out.println("file saved");
+		xmlParser.save(FILE_NAME);
 	}
 
 	// log work
