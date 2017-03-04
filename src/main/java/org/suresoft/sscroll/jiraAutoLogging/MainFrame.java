@@ -64,6 +64,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JDatePickerImpl datePicker;
 	private JTextField timeSpentTextField;
 	private JTextArea commentTextArea;
+	private XmlFileController xmlFileController;
 	
 	public MainFrame() {
 		super(TITLE);
@@ -79,6 +80,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		contentPane.add(buildLoggingDataField());
 		contentPane.add(buildButtonField());
 		
+		xmlFileController = new XmlFileController();
 		fillDataFromFile();
 		
 		setVisible(true);
@@ -202,19 +204,19 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 
 	private void fillDataFromFile() {
-		XmlFileController xmlFileController = new XmlFileController(FILE_NAME);
+		xmlFileController.load(FILE_NAME);
 		xmlFileController.parse();
 		
-		ipTextField.setText(xmlFileController.getValue(XmlFileController.Element.IP));
-		portTextField.setText(xmlFileController.getValue(XmlFileController.Element.PORT));
-		autherTextField.setText(xmlFileController.getValue(XmlFileController.Element.AUTHOR));
+		ipTextField.setText(xmlFileController.getValue(XmlFileController.Tag.IP));
+		portTextField.setText(xmlFileController.getValue(XmlFileController.Tag.PORT));
+		autherTextField.setText(xmlFileController.getValue(XmlFileController.Tag.AUTHOR));
 //		passwordTextField.setText(xmlFileParser.getValue(XmlFileParser.Element.IP)); // no password for security
 
-		issueKeyTextField.setText(xmlFileController.getValue(XmlFileController.Element.ISSUE_KEY));
-		nameListTextArea.setText(xmlFileController.getValue(XmlFileController.Element.NAME_LIST));
-		setDate(xmlFileController.getValue(XmlFileController.Element.DATE));
-		timeSpentTextField.setText(xmlFileController.getValue(XmlFileController.Element.TIME_SPENT));
-		commentTextArea.setText(xmlFileController.getValue(XmlFileController.Element.COMMENT));
+		issueKeyTextField.setText(xmlFileController.getValue(XmlFileController.Tag.ISSUE_KEY));
+		nameListTextArea.setText(xmlFileController.getValue(XmlFileController.Tag.NAME_LIST));
+		setDate(xmlFileController.getValue(XmlFileController.Tag.DATE));
+		timeSpentTextField.setText(xmlFileController.getValue(XmlFileController.Tag.TIME_SPENT));
+		commentTextArea.setText(xmlFileController.getValue(XmlFileController.Tag.COMMENT));
 	}
 	
 	private void setDate(final String date) {
@@ -238,19 +240,16 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 
 	private void saveDataToFile() {
-		XmlFileController xmlFileController = new XmlFileController(FILE_NAME);
-		xmlFileController.parse();
-		
-		xmlFileController.setElementValue(XmlFileController.Element.IP, ipTextField.getText());
-		xmlFileController.setElementValue(XmlFileController.Element.PORT, portTextField.getText());
-		xmlFileController.setElementValue(XmlFileController.Element.AUTHOR, autherTextField.getText());
+		xmlFileController.setElementValue(XmlFileController.Tag.IP, ipTextField.getText());
+		xmlFileController.setElementValue(XmlFileController.Tag.PORT, portTextField.getText());
+		xmlFileController.setElementValue(XmlFileController.Tag.AUTHOR, autherTextField.getText());
 //		xmlFileController.setElementValue(XmlFileController.Element.PASSWORD, passwordTextField.getText());
 
-		xmlFileController.setElementValue(XmlFileController.Element.ISSUE_KEY, issueKeyTextField.getText());
-		xmlFileController.setElementValue(XmlFileController.Element.NAME_LIST, nameListTextArea.getText());
-		xmlFileController.setElementValue(XmlFileController.Element.DATE, getDate());
-		xmlFileController.setElementValue(XmlFileController.Element.TIME_SPENT, timeSpentTextField.getText());
-		xmlFileController.setElementValue(XmlFileController.Element.COMMENT, commentTextArea.getText());
+		xmlFileController.setElementValue(XmlFileController.Tag.ISSUE_KEY, issueKeyTextField.getText());
+		xmlFileController.setElementValue(XmlFileController.Tag.NAME_LIST, nameListTextArea.getText());
+		xmlFileController.setElementValue(XmlFileController.Tag.DATE, getDate());
+		xmlFileController.setElementValue(XmlFileController.Tag.TIME_SPENT, timeSpentTextField.getText());
+		xmlFileController.setElementValue(XmlFileController.Tag.COMMENT, commentTextArea.getText());
 		
 		System.out.println("file saved");
 	}

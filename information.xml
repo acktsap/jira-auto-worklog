@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<information>	
+	<ip>211.116.223.80</ip>
+	<port>8080</port>
+	<author>tilim</author>
+	<issuekey>KP-203</issuekey>
+	<namelist>
+		<name>tilim</name>
+		<name>hye1</name>
+	</namelist>
+	<date>2015-12-19</date>
+	<timespent>1h 30m</timespent>
+	<comment>I'm comment</comment>
+</information>
