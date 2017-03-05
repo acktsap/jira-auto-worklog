@@ -59,7 +59,6 @@ public class ServerArbiter {
 	}
 	
 	public void makeSession(final LoggerInfo userData) throws UnsupportedEncodingException, IOException, ParseException {
-		// 諛섎뱶�떆 '紐⑤뱺 �옉�뾽湲곕줉 �닔�젙', 'Log work for Others' 沅뚰븳�씠 �엳�뒗 �궗�슜�옄留뚯씠 �떎瑜� �궗�슜�옄�쓽 Log work瑜� �븷 �닔 �엳�떎.!!!!(以묒슂)
 		HttpURLConnection httpConnection = makeSessionConnection();
 		JSONObject jsonSessionData = jiraLogJsonParser.toJsonObject(userData);
 		
