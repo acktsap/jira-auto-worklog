@@ -29,8 +29,8 @@ public class XmlParser {
 		AUTHOR("author"),
 		PASSWORD("password"),	// not used
 		ISSUE_KEY("issuekey"),
-		NAME_LIST("namelist"),
-		NAME("name"),
+		ID_LIST("idlist"),
+		ID("id"),
 		DATE("date"),	// not used
 		TIME_SPENT("timespent"),
 		COMMENT("comment");
@@ -83,9 +83,9 @@ public class XmlParser {
 	public String getValue(final Tag tag) {
 		String value = "";
 		
-		if( tag == Tag.NAME_LIST ) {
-			Element nameListElement = (Element) rootElement.getElementsByTagName(Tag.NAME_LIST.getName()).item(0);
-			NodeList nameList = nameListElement.getElementsByTagName(Tag.NAME.getName());
+		if( tag == Tag.ID_LIST ) {
+			Element nameListElement = (Element) rootElement.getElementsByTagName(Tag.ID_LIST.getName()).item(0);
+			NodeList nameList = nameListElement.getElementsByTagName(Tag.ID.getName());
 
 			for( int i = 0; i < nameList.getLength(); ++i ) {
 				Node nameNode = nameList.item(i);
@@ -147,10 +147,10 @@ public class XmlParser {
 	 */
 	public void setElementValue(final Tag tag, final String value) {
 		Element childElement = rootDocument.createElement(tag.getName());
-		if(tag == Tag.NAME_LIST) {
+		if(tag == Tag.ID_LIST) {
 			String[] names = value.split(" ");
 			for( String name : names ) {
-				Element nameElement = rootDocument.createElement(Tag.NAME.getName());
+				Element nameElement = rootDocument.createElement(Tag.ID.getName());
 				nameElement.appendChild(rootDocument.createTextNode(name));
 				childElement.appendChild(nameElement);
 			}

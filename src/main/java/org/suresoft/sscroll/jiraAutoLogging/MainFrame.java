@@ -1,7 +1,9 @@
 package org.suresoft.sscroll.jiraAutoLogging;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -32,6 +34,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
@@ -47,12 +50,17 @@ import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
 public class MainFrame extends JFrame implements ActionListener {
 
+	
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3279630073848170157L;
 	private static final String FILE_NAME = "information.xml";
 	private static final String TITLE = "Jira logging";
+	
+	private static final int FRAME_WIDTH = 400;
+	private static final int FRAME_HEIGHT = 530;
 	
 	private ServerArbiter serverArbiter;
 
@@ -71,7 +79,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		super(TITLE);
 
 		// basic setting
-		setSize(400, 500);
+		setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
@@ -100,44 +108,100 @@ public class MainFrame extends JFrame implements ActionListener {
 		ipTextField = new JTextField(9);
 		portTextField = new JTextField(4);
 		
-		JPanel panel = new JPanel();
-		panel.setBorder(buildTitleBorder("Server Information"));
-		panel.add(buildPanelWithLabel("IP : ", ipTextField));
-		panel.add(buildPanelWithLabel("Port : ", portTextField));
+		JPanel serverDataPanel = new JPanel();
+		serverDataPanel.setLayout(new BoxLayout(serverDataPanel, BoxLayout.Y_AXIS));
+		serverDataPanel.setPreferredSize(new Dimension(FRAME_WIDTH, 80));
+		serverDataPanel.setBorder(buildTitleBorder("Server Information"));
+		serverDataPanel.add(buildPanelWithLabel("IP", ipTextField));
+		serverDataPanel.add(buildPanelWithLabel("Port", portTextField));
 
-		return panel;
+		return serverDataPanel;
 	}
 
 	private Component buildLoggerField() {
 		autherTextField = new JTextField(8);
 		passwordTextField = new JPasswordField(10);
 		
-		JPanel panel = new JPanel();
-		panel.setBorder(buildTitleBorder("Logger Information"));
-		panel.add(buildPanelWithLabel("Author : ", autherTextField));
-		panel.add(buildPanelWithLabel("Password : ", passwordTextField));
+		JPanel loggerDataPanel = new JPanel();
+		loggerDataPanel.setLayout(new BoxLayout(loggerDataPanel, BoxLayout.Y_AXIS));
+		loggerDataPanel.setPreferredSize(new Dimension(FRAME_WIDTH, 80));
+		loggerDataPanel.setBorder(buildTitleBorder("Logger Information"));
+		loggerDataPanel.add(buildPanelWithLabel("Author Id", autherTextField));
+		loggerDataPanel.add(buildPanelWithLabel("Password", passwordTextField));
 		
-		return panel;
+		return loggerDataPanel;
 	}
 
 	private Component buildLoggingDataField() {
 		issueKeyTextField = new JTextField(8);
-		nameListTextArea = new JTextArea(2, 13);
+		nameListTextArea = buildJTextArea(2, 20);
 		datePicker = buildDatePicker();
 		timeSpentTextField = new JTextField(8);
-		commentTextArea = new JTextArea(3, 15);
+		commentTextArea = buildJTextArea(3, 20);
 		
-		JPanel loggingDataPanel = new JPanel(new GridLayout(0, 1));
+		JPanel loggingDataPanel = new JPanel();
+		loggingDataPanel.setLayout(new BoxLayout(loggingDataPanel, BoxLayout.Y_AXIS));
 		loggingDataPanel.setBorder(buildTitleBorder("Logging Data"));
-		loggingDataPanel.add(buildPanelWithLabel("Issue key : ", issueKeyTextField));
-		loggingDataPanel.add(buildPanelWithLabel("Name List(split by \" \") : ", nameListTextArea));
-		loggingDataPanel.add(buildPanelWithLabel("Date : ", datePicker));
-		loggingDataPanel.add(buildPanelWithLabel("Time Spent : ", timeSpentTextField));
-		loggingDataPanel.add(buildPanelWithLabel("Comment : ", commentTextArea));
+		loggingDataPanel.add(buildPanelWithLabel("Issue key", issueKeyTextField));
+		loggingDataPanel.add(buildPanelWithLabel("<html><p>User Id List</p><p>(split by \" \")</p></html>", nameListTextArea));
+		loggingDataPanel.add(buildPanelWithLabel("Date", datePicker));
+		loggingDataPanel.add(buildPanelWithLabel("Time Spent", timeSpentTextField));
+		loggingDataPanel.add(buildPanelWithLabel("Comment", commentTextArea));
 		
 		return loggingDataPanel;
 	}
 
+	private Component buildButtonField() {
+		JButton logWorkButton = new JButton("Log Work");
+		logWorkButton.addActionListener(this);
+		
+		JButton exitButton = new JButton("Exit");
+		exitButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				saveDataToFile();
+				MainFrame.this.dispose();
+			}
+		});
+		
+		JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		buttonsPanel.add(logWorkButton);
+		buttonsPanel.add(exitButton);
+		
+		return buttonsPanel;
+	}
+
+	private TitledBorder buildTitleBorder(final String title) {
+		Border border = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
+		TitledBorder titleBorder = BorderFactory.createTitledBorder(border, title);
+		titleBorder.setTitleJustification(TitledBorder.LEFT);
+		
+		return titleBorder;
+	}
+	
+	// need adjustment
+	private JPanel buildPanelWithLabel(final String labelText, final JComponent... components) {
+		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		
+		JLabel label = new JLabel(labelText);
+		label.setPreferredSize(new Dimension(80, 30));
+		label.setHorizontalAlignment(JLabel.RIGHT);
+		label.setBorder(new EmptyBorder(0, 0, 0, 7));	// right border
+//		label.setVerticalAlignment(JLabel.TOP);
+		panel.add(label);
+		
+		for( Component component : components) {
+			panel.add(component);
+		}
+		return panel;
+	}
+	
+	private JTextArea buildJTextArea(final int rows, final int columns) {
+		JTextArea textArea = new JTextArea(rows, columns);
+		textArea.setLineWrap(true);
+		textArea.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+		return textArea;
+	}
+	
 	private JDatePickerImpl buildDatePicker() {
 		UtilDateModel utilDateModel = new UtilDateModel();
 		utilDateModel.setSelected(true);	// set the today
@@ -172,43 +236,6 @@ public class MainFrame extends JFrame implements ActionListener {
 			return "";
 		}
 	}
-	
-	private Component buildButtonField() {
-		JButton logWorkButton = new JButton("Log Work");
-		logWorkButton.addActionListener(this);
-		
-		JButton exitButton = new JButton("Exit");
-		exitButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				saveDataToFile();
-				MainFrame.this.dispose();
-			}
-		});
-		
-		JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		panel.add(logWorkButton);
-		panel.add(exitButton);
-		
-		return panel;
-	}
-
-
-	private TitledBorder buildTitleBorder(final String title) {
-		Border border = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
-		TitledBorder titleBorder = BorderFactory.createTitledBorder(border, title);
-		titleBorder.setTitleJustification(TitledBorder.LEFT);
-		
-		return titleBorder;
-	}
-	
-	private JPanel buildPanelWithLabel(final String labelText, final Component... components) {
-		JPanel panel = new JPanel();
-		panel.add(new JLabel(labelText));
-		for( Component component : components) {
-			panel.add(component);
-		}
-		return panel;
-	}
 
 	private void fillDataFromFile() {
 		XmlParser xmlFileController = new XmlParser();
@@ -220,7 +247,7 @@ public class MainFrame extends JFrame implements ActionListener {
 //		passwordTextField.setText(xmlFileParser.getValue(XmlParser.Tag.PASSWORD)); // no password for security
 
 		issueKeyTextField.setText(xmlFileController.getValue(XmlParser.Tag.ISSUE_KEY));
-		nameListTextArea.setText(xmlFileController.getValue(XmlParser.Tag.NAME_LIST));
+		nameListTextArea.setText(xmlFileController.getValue(XmlParser.Tag.ID_LIST));
 //		setDate(xmlFileController.getValue(XmlParser.Tag.DATE));	// don't save date
 		timeSpentTextField.setText(xmlFileController.getValue(XmlParser.Tag.TIME_SPENT));
 		commentTextArea.setText(xmlFileController.getValue(XmlParser.Tag.COMMENT));
@@ -253,10 +280,10 @@ public class MainFrame extends JFrame implements ActionListener {
 		xmlParser.setElementValue(XmlParser.Tag.IP, ipTextField.getText());
 		xmlParser.setElementValue(XmlParser.Tag.PORT, portTextField.getText());
 		xmlParser.setElementValue(XmlParser.Tag.AUTHOR, autherTextField.getText());
-//		xmlFileController.setElementValue(XmlFileController.Element.PASSWORD, passwordTextField.getText());
+//		xmlFileController.setElementValue(XmlParser.Tag.PASSWORD, passwordTextField.getText());
 
 		xmlParser.setElementValue(XmlParser.Tag.ISSUE_KEY, issueKeyTextField.getText());
-		xmlParser.setElementValue(XmlParser.Tag.NAME_LIST, nameListTextArea.getText());
+		xmlParser.setElementValue(XmlParser.Tag.ID_LIST, nameListTextArea.getText());
 //		xmlParser.setElementValue(XmlParser.Tag.DATE, getDate());
 		xmlParser.setElementValue(XmlParser.Tag.TIME_SPENT, timeSpentTextField.getText());
 		xmlParser.setElementValue(XmlParser.Tag.COMMENT, commentTextArea.getText());
