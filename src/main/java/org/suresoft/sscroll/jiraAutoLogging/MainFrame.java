@@ -8,6 +8,10 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -196,9 +200,30 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 	
 	private JTextArea buildJTextArea(final int rows, final int columns) {
-		JTextArea textArea = new JTextArea(rows, columns);
+		JTextArea textArea = new JTextArea(rows, columns) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			// tab -> focus next, shift + tab -> focus backward
+			@Override
+			protected void processComponentKeyEvent(KeyEvent e) {
+				if (e.getID() == KeyEvent.KEY_PRESSED && e.getKeyCode() == KeyEvent.VK_TAB) {
+					e.consume();
+					if (e.isShiftDown()) {
+						transferFocusBackward();
+					} else {
+						transferFocus();
+					}
+				} else {
+					super.processComponentKeyEvent(e);
+				}
+			}
+		};
 		textArea.setLineWrap(true);
 		textArea.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+		
 		return textArea;
 	}
 	
