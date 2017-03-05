@@ -70,8 +70,10 @@ public class XmlParser {
 			rootElement = rootDocument.getDocumentElement();
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
-		} catch (SAXException | IOException e) {
-			e.printStackTrace();
+		} catch (SAXException | IOException e) {	// no file
+			rootDocument = null;
+			rootElement = null;
+			System.out.println("No file");
 		}
 	}
 
@@ -82,23 +84,24 @@ public class XmlParser {
 	 */
 	public String getValue(final Tag tag) {
 		String value = "";
-		
-		if( tag == Tag.ID_LIST ) {
-			Element nameListElement = (Element) rootElement.getElementsByTagName(Tag.ID_LIST.getName()).item(0);
-			NodeList nameList = nameListElement.getElementsByTagName(Tag.ID.getName());
+		if( rootDocument != null ) {
+			if( tag == Tag.ID_LIST ) {
+				Element nameListElement = (Element) rootElement.getElementsByTagName(Tag.ID_LIST.getName()).item(0);
+				NodeList nameList = nameListElement.getElementsByTagName(Tag.ID.getName());
 
-			for( int i = 0; i < nameList.getLength(); ++i ) {
-				Node nameNode = nameList.item(i);
-				if (nameNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element nameElement = (Element) nameNode;
-					if( i != 0 ) {
-						value += " ";
+				for( int i = 0; i < nameList.getLength(); ++i ) {
+					Node nameNode = nameList.item(i);
+					if (nameNode.getNodeType() == Node.ELEMENT_NODE) {
+						Element nameElement = (Element) nameNode;
+						if( i != 0 ) {
+							value += " ";
+						}
+						value += nameElement.getTextContent();
 					}
-					value += nameElement.getTextContent();
 				}
+			} else {
+				value = rootElement.getElementsByTagName(tag.getName()).item(0).getTextContent();
 			}
-		} else {
-			value = rootElement.getElementsByTagName(tag.getName()).item(0).getTextContent();
 		}
 		return value;
 	}
@@ -146,18 +149,20 @@ public class XmlParser {
 	 * @param value
 	 */
 	public void setElementValue(final Tag tag, final String value) {
-		Element childElement = rootDocument.createElement(tag.getName());
-		if(tag == Tag.ID_LIST) {
-			String[] names = value.split(" ");
-			for( String name : names ) {
-				Element nameElement = rootDocument.createElement(Tag.ID.getName());
-				nameElement.appendChild(rootDocument.createTextNode(name));
-				childElement.appendChild(nameElement);
+		if( rootDocument != null ) {
+			Element childElement = rootDocument.createElement(tag.getName());
+			if(tag == Tag.ID_LIST) {
+				String[] names = value.split(" ");
+				for( String name : names ) {
+					Element nameElement = rootDocument.createElement(Tag.ID.getName());
+					nameElement.appendChild(rootDocument.createTextNode(name));
+					childElement.appendChild(nameElement);
+				}
+			} else {
+				childElement.appendChild(rootDocument.createTextNode(value));
 			}
-		} else {
-			childElement.appendChild(rootDocument.createTextNode(value));
+			rootElement.appendChild(childElement);
 		}
-		rootElement.appendChild(childElement);
 	}
 
 }
