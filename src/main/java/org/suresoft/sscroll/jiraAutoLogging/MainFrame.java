@@ -5,13 +5,9 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -64,7 +60,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	private static final String TITLE = "Jira logging";
 	
 	private static final int FRAME_WIDTH = 400;
-	private static final int FRAME_HEIGHT = 530;
+	private static final int FRAME_HEIGHT = 550;
 	
 	private ServerArbiter serverArbiter;
 
@@ -114,7 +110,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		JPanel serverDataPanel = new JPanel();
 		serverDataPanel.setLayout(new BoxLayout(serverDataPanel, BoxLayout.Y_AXIS));
-		serverDataPanel.setPreferredSize(new Dimension(FRAME_WIDTH, 80));
+		serverDataPanel.setPreferredSize(new Dimension(FRAME_WIDTH, 85));
 		serverDataPanel.setBorder(buildTitleBorder("Server Information"));
 		serverDataPanel.add(buildPanelWithLabel("IP", ipTextField));
 		serverDataPanel.add(buildPanelWithLabel("Port", portTextField));
@@ -128,7 +124,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		JPanel loggerDataPanel = new JPanel();
 		loggerDataPanel.setLayout(new BoxLayout(loggerDataPanel, BoxLayout.Y_AXIS));
-		loggerDataPanel.setPreferredSize(new Dimension(FRAME_WIDTH, 80));
+		loggerDataPanel.setPreferredSize(new Dimension(FRAME_WIDTH, 85));
 		loggerDataPanel.setBorder(buildTitleBorder("Logger Information"));
 		loggerDataPanel.add(buildPanelWithLabel("Author Id", autherTextField));
 		loggerDataPanel.add(buildPanelWithLabel("Password", passwordTextField));

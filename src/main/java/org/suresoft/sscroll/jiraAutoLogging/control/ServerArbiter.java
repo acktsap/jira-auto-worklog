@@ -12,7 +12,6 @@ import java.net.URL;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.suresoft.sscroll.jiraAutoLogging.entity.LoggerInfo;
 import org.suresoft.sscroll.jiraAutoLogging.entity.LoggingData;
