@@ -5,8 +5,11 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -15,18 +18,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.rmi.ConnectException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -37,7 +36,9 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.JTextComponent;
 
+import org.suresoft.sscroll.jiraAutoLogging.control.DateLabelFormatter;
 import org.suresoft.sscroll.jiraAutoLogging.control.ServerArbiter;
 import org.suresoft.sscroll.jiraAutoLogging.control.XmlParser;
 import org.suresoft.sscroll.jiraAutoLogging.entity.LoggerInfo;
@@ -50,8 +51,6 @@ import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
 public class MainFrame extends JFrame implements ActionListener {
 
-	
-	
 	/**
 	 * 
 	 */
@@ -59,9 +58,10 @@ public class MainFrame extends JFrame implements ActionListener {
 	private static final String FILE_NAME = "information.xml";
 	private static final String TITLE = "Jira logging";
 	
-	private static final int FRAME_WIDTH = 400;
-	private static final int FRAME_HEIGHT = 550;
+	private static final int FRAME_WIDTH = 410;
+	private static final int FRAME_HEIGHT = 570;
 	
+	private ArrayList<InputChecker> inputCheckers;
 	private ServerArbiter serverArbiter;
 
 	private JTextField ipTextField;
@@ -70,7 +70,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JPasswordField passwordTextField;
 
 	private JTextField issueKeyTextField;
-	private JTextArea nameListTextArea;
+	private JTextArea userIdListTextArea;
 	private JDatePickerImpl datePicker;
 	private JTextField timeSpentTextField;
 	private JTextArea commentTextArea;
@@ -85,10 +85,13 @@ public class MainFrame extends JFrame implements ActionListener {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(final WindowEvent event) {
-				saveDataToFile();
+				MainFrame.this.saveDataToFile();
 				MainFrame.this.dispose();
 			}
 		});
+		
+		inputCheckers = new ArrayList<InputChecker>();
+		serverArbiter = new ServerArbiter();
 		
 		Container contentPane = this.getContentPane();
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
@@ -98,10 +101,9 @@ public class MainFrame extends JFrame implements ActionListener {
 		contentPane.add(buildButtonField());
 		
 		fillDataFromFile();
+		updateAllAlertLabels();
 		
 		setVisible(true);
-		
-		serverArbiter = new ServerArbiter();
 	}
 
 	private JComponent buildServerField() {
@@ -112,8 +114,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		serverDataPanel.setLayout(new BoxLayout(serverDataPanel, BoxLayout.Y_AXIS));
 		serverDataPanel.setPreferredSize(new Dimension(FRAME_WIDTH, 85));
 		serverDataPanel.setBorder(buildTitleBorder("Server Information"));
-		serverDataPanel.add(buildPanelWithLabel("IP", ipTextField));
-		serverDataPanel.add(buildPanelWithLabel("Port", portTextField));
+		serverDataPanel.add(buildPanelWithLabel("IP", ipTextField, new IPChecker(ipTextField)));
+		serverDataPanel.add(buildPanelWithLabel("Port", portTextField, new PortChecker(portTextField)));
 
 		return serverDataPanel;
 	}
@@ -126,15 +128,15 @@ public class MainFrame extends JFrame implements ActionListener {
 		loggerDataPanel.setLayout(new BoxLayout(loggerDataPanel, BoxLayout.Y_AXIS));
 		loggerDataPanel.setPreferredSize(new Dimension(FRAME_WIDTH, 85));
 		loggerDataPanel.setBorder(buildTitleBorder("Logger Information"));
-		loggerDataPanel.add(buildPanelWithLabel("Author Id", autherTextField));
-		loggerDataPanel.add(buildPanelWithLabel("Password", passwordTextField));
+		loggerDataPanel.add(buildPanelWithLabel("Author Id", autherTextField, new AuthorIdChecker(autherTextField)));
+		loggerDataPanel.add(buildPanelWithLabel("Password", passwordTextField, new PasswordChecker(passwordTextField)));
 		
 		return loggerDataPanel;
 	}
 
 	private Component buildLoggingDataField() {
 		issueKeyTextField = new JTextField(8);
-		nameListTextArea = buildJTextArea(2, 20);
+		userIdListTextArea = buildJTextArea(2, 20);
 		datePicker = buildDatePicker();
 		timeSpentTextField = new JTextField(8);
 		commentTextArea = buildJTextArea(3, 20);
@@ -142,11 +144,12 @@ public class MainFrame extends JFrame implements ActionListener {
 		JPanel loggingDataPanel = new JPanel();
 		loggingDataPanel.setLayout(new BoxLayout(loggingDataPanel, BoxLayout.Y_AXIS));
 		loggingDataPanel.setBorder(buildTitleBorder("Logging Data"));
-		loggingDataPanel.add(buildPanelWithLabel("Issue key", issueKeyTextField));
-		loggingDataPanel.add(buildPanelWithLabel("<html><p>User Id List</p><p>(split by \" \")</p></html>", nameListTextArea));
+		
+		loggingDataPanel.add(buildPanelWithLabel("Issue key", issueKeyTextField, new IssueKeyChecker(issueKeyTextField)));
+		loggingDataPanel.add(buildPanelWithLabel("User Id List", userIdListTextArea, new UserIdListChecker(userIdListTextArea)));
 		loggingDataPanel.add(buildPanelWithLabel("Date", datePicker));
-		loggingDataPanel.add(buildPanelWithLabel("Time Spent", timeSpentTextField));
-		loggingDataPanel.add(buildPanelWithLabel("Comment", commentTextArea));
+		loggingDataPanel.add(buildPanelWithLabel("Time Spent", timeSpentTextField, new TimeSpentChecker(timeSpentTextField)));
+		loggingDataPanel.add(buildPanelWithLabel("Comment", commentTextArea, new BlankChecker(commentTextArea)));
 		
 		return loggingDataPanel;
 	}
@@ -178,20 +181,46 @@ public class MainFrame extends JFrame implements ActionListener {
 		return titleBorder;
 	}
 	
-	// need adjustment
-	private JPanel buildPanelWithLabel(final String labelText, final JComponent... components) {
+	private JPanel buildPanelWithLabel(final String labelText, final JComponent jComponent) {
 		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		
 		JLabel label = new JLabel(labelText);
 		label.setPreferredSize(new Dimension(80, 30));
 		label.setHorizontalAlignment(JLabel.RIGHT);
-		label.setBorder(new EmptyBorder(0, 0, 0, 7));	// right border
+		label.setBorder(new EmptyBorder(0, 0, 0, 6));	// right border
 //		label.setVerticalAlignment(JLabel.TOP);
 		panel.add(label);
+		panel.add(jComponent);
 		
-		for( Component component : components) {
-			panel.add(component);
-		}
+		return panel;
+	}
+	
+	private JPanel buildPanelWithLabel(final String labelText, final JTextComponent textComponent, final InputChecker inputChecker) {
+		JPanel panel = buildPanelWithLabel(labelText, textComponent);
+		
+		JLabel alertLabel = new JLabel();
+		alertLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
+		alertLabel.setHorizontalAlignment(JLabel.LEFT);
+		alertLabel.setBorder(new EmptyBorder(0, 5, 0, 0));	// left border
+		
+		inputChecker.setAlertLabel(alertLabel);
+		inputCheckers.add(inputChecker);
+		
+		textComponent.addFocusListener(new FocusListener() {
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				inputChecker.updateAlertLabel();
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e) {
+				// Do nothing
+			}
+		});
+		
+		panel.add(alertLabel);
+		
 		return panel;
 	}
 	
@@ -233,31 +262,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		return datePicker;
 	}
 
-	// Mar 1, 2017 -> 2017-03-01
-	private class DateLabelFormatter extends AbstractFormatter {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private String datePattern = "yyyy-MM-dd";
-	    private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
-		
-		@Override
-		public Object stringToValue(String text) throws ParseException {
-			return dateFormatter.parseObject(text);
-		}
-
-		@Override
-		public String valueToString(Object value) throws ParseException {
-			if (value != null) {
-	            Calendar cal = (Calendar) value;
-	            return dateFormatter.format(cal.getTime());
-	        }
-			return "";
-		}
-	}
-
 	private void fillDataFromFile() {
 		XmlParser xmlFileController = new XmlParser();
 		xmlFileController.parse(FILE_NAME);
@@ -268,7 +272,7 @@ public class MainFrame extends JFrame implements ActionListener {
 //		passwordTextField.setText(xmlFileParser.getValue(XmlParser.Tag.PASSWORD)); // no password for security
 
 		issueKeyTextField.setText(xmlFileController.getValue(XmlParser.Tag.ISSUE_KEY));
-		nameListTextArea.setText(xmlFileController.getValue(XmlParser.Tag.ID_LIST));
+		userIdListTextArea.setText(xmlFileController.getValue(XmlParser.Tag.ID_LIST));
 //		setDate(xmlFileController.getValue(XmlParser.Tag.DATE));	// don't save date
 		timeSpentTextField.setText(xmlFileController.getValue(XmlParser.Tag.TIME_SPENT));
 		commentTextArea.setText(xmlFileController.getValue(XmlParser.Tag.COMMENT));
@@ -295,6 +299,12 @@ public class MainFrame extends JFrame implements ActionListener {
 		datePicker.getModel().setDay(day);
 	}
 
+	private void updateAllAlertLabels() {
+		for( final InputChecker inputChecker : inputCheckers) {
+			inputChecker.updateAlertLabel();
+		}
+	}
+	
 	private void saveDataToFile() {
 		XmlParser xmlParser = new XmlParser();
 		
@@ -304,7 +314,7 @@ public class MainFrame extends JFrame implements ActionListener {
 //		xmlFileController.setElementValue(XmlParser.Tag.PASSWORD, passwordTextField.getText());
 
 		xmlParser.setElementValue(XmlParser.Tag.ISSUE_KEY, issueKeyTextField.getText());
-		xmlParser.setElementValue(XmlParser.Tag.ID_LIST, nameListTextArea.getText());
+		xmlParser.setElementValue(XmlParser.Tag.ID_LIST, userIdListTextArea.getText());
 //		xmlParser.setElementValue(XmlParser.Tag.DATE, getDate());
 		xmlParser.setElementValue(XmlParser.Tag.TIME_SPENT, timeSpentTextField.getText());
 		xmlParser.setElementValue(XmlParser.Tag.COMMENT, commentTextArea.getText());
@@ -313,19 +323,24 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 
 	// log work
+	@Override
 	public void actionPerformed(final ActionEvent event) {
 		try {
-			String ip = ipTextField.getText();
-			String port = portTextField.getText();
-			serverArbiter.setJiraServer(ip, port);
-			
-			System.out.println("ip : " + ip + " , port : " + port);
-			
-			LoggerInfo loggerInfo = getLoggerInfo();
-			serverArbiter.makeSession(loggerInfo);
-			
-			LoggingData loggingData = getLoggingData();
-			serverArbiter.sendPost(loggingData);
+			if( isAllInputRight() ) {
+				String ip = ipTextField.getText();
+				String port = portTextField.getText();
+				serverArbiter.setJiraServer(ip, port);
+				
+				System.out.println("ip : " + ip + " , port : " + port);
+				
+				LoggerInfo loggerInfo = getLoggerInfo();
+				serverArbiter.makeSession(loggerInfo);
+				
+				LoggingData loggingData = getLoggingData();
+				serverArbiter.sendPost(loggingData);
+			} else {
+				System.err.println("fuck off!!");
+			}
 			
 		} catch (ConnectException e ) {
 			e.printStackTrace();
@@ -340,6 +355,16 @@ public class MainFrame extends JFrame implements ActionListener {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private boolean isAllInputRight() {
+		boolean result = true;
+		for( InputChecker inputChecker : inputCheckers ) {
+			if( !inputChecker.isRight() ) {
+				result = false;
+			}
+		}
+		return result;
 	}
 	
 	private LoggerInfo getLoggerInfo() {
@@ -379,7 +404,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 
 	private List<String> getNameList() {
-		String[] nameListArray = nameListTextArea.getText().split(" ");
+		String[] nameListArray = userIdListTextArea.getText().split(" ");
 		List<String> nameList = new ArrayList<String>(Arrays.asList(nameListArray));
 		return nameList;
 	}
@@ -416,6 +441,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 		return timeBySeconds;
 	}
+
 	
 	public static void main(String[] args) throws Exception {
 		new MainFrame();
