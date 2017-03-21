@@ -91,7 +91,7 @@ class PortChecker extends InputChecker {
 	
 	@Override
 	protected String getRightExample() {
-		return "range : 0 ~ 65535";
+		return "Range : 0 ~ 65535";
 	}
 
 }
@@ -105,7 +105,6 @@ class AuthorIdChecker extends InputChecker {
 
 	@Override
 	protected Pattern getPattern() {
-		// TODO
 		return Pattern.compile("^\\w+$");
 	}
 
@@ -129,8 +128,7 @@ class PasswordChecker extends InputChecker {
 
 	@Override
 	protected Pattern getPattern() {
-		// TODO
-		return Pattern.compile("^\\w+$");
+		return Pattern.compile("^.+$");
 	}
 
 	@Override
@@ -153,8 +151,7 @@ class IssueKeyChecker extends InputChecker {
 
 	@Override
 	protected Pattern getPattern() {
-		// TODO
-		return Pattern.compile("^\\w+$");
+		return Pattern.compile("^\\w+-[1-9][0-9]*$");
 	}
 
 	@Override
@@ -177,7 +174,6 @@ class UserIdListChecker extends InputChecker {
 
 	@Override
 	protected Pattern getPattern() {
-		// TODO
 		return Pattern.compile("^\\w+(( )+\\w+)*$"); // id separated by space
 	}
 
@@ -224,8 +220,7 @@ class BlankChecker extends InputChecker {
 
 	@Override
 	protected Pattern getPattern() {
-		// TODO
-		return Pattern.compile("^\\w+$");
+		return Pattern.compile("^.+$");
 	}
 
 	@Override
@@ -235,7 +230,7 @@ class BlankChecker extends InputChecker {
 	
 	@Override
 	protected String getRightExample() {
-		return "Type!";
+		return "Fill it!";
 	}
 
 }
