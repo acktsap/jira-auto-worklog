@@ -179,7 +179,9 @@ class UserIdListChecker extends InputChecker {
 
 	@Override
 	protected String getRightSignal() {
-		return "Good";
+		String userIds = inputComponent.getText();
+		String[] idList = userIds.split(" ");
+		return idList.length + " people";
 	}
 	
 	@Override
