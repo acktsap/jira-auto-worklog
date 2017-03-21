@@ -174,7 +174,7 @@ class UserIdListChecker extends InputChecker {
 
 	@Override
 	protected Pattern getPattern() {
-		return Pattern.compile("^\\w+(( )+\\w+)*$"); // id separated by space
+		return Pattern.compile("^\\w+(( )\\w+)*$"); // id separated by space
 	}
 
 	@Override
