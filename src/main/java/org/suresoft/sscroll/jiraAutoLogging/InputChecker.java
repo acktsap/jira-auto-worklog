@@ -97,9 +97,9 @@ class PortChecker extends InputChecker {
 }
 
 
-class AuthorIdChecker extends InputChecker {
+class IdChecker extends InputChecker {
 
-	public AuthorIdChecker(final JTextComponent inputComponent) {
+	public IdChecker(final JTextComponent inputComponent) {
 		super(inputComponent);
 	}
 

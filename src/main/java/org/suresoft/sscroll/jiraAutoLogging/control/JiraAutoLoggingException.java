@@ -1,8 +1,10 @@
 package org.suresoft.sscroll.jiraAutoLogging.control;
 
-public class JiraAutoLoggingException {
-	public class XmlFileException extends RuntimeException {
-
+public abstract class JiraAutoLoggingException {
+	public static final class MakeSessionFailedException extends RuntimeException {
+		public MakeSessionFailedException(final String message) {
+			super(message);
+		}
 	}	
 }
 

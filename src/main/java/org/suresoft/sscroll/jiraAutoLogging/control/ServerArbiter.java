@@ -9,17 +9,20 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+import org.suresoft.sscroll.jiraAutoLogging.control.JiraAutoLoggingException.MakeSessionFailedException;
 import org.suresoft.sscroll.jiraAutoLogging.entity.LoggerInfo;
 import org.suresoft.sscroll.jiraAutoLogging.entity.LoggingData;
 
 public class ServerArbiter {
-
 	
 	private static final int VALID_RESPONSE = 200;
+	private static final int NEED_VERIFICATION_CODE = 403;
 	private static final String SESSION_URL = "/rest/auth/1/session";
 	private static final String WORKLOG_URL = "/rest/tempo-timesheets/3/worklogs";
 	
@@ -39,6 +42,7 @@ public class ServerArbiter {
 		jiraServer += ":";
 		jiraServer += port;
 	}
+	
 	public String getJiraServer(){
 		return jiraServer;
 	}
@@ -46,6 +50,7 @@ public class ServerArbiter {
 	public String getSessionName() {
 		return sessionName;
 	}
+	
 	public void setSessionName(final String sessionName) {
 		this.sessionName = sessionName;
 	}
@@ -53,46 +58,67 @@ public class ServerArbiter {
 	public String getSessionValue() {
 		return sessionValue;
 	}
+	
 	public void setSessionValue(final String sessionValue) {
 		this.sessionValue = sessionValue;
 	}
 	
-	public void makeSession(final LoggerInfo userData) throws UnsupportedEncodingException, IOException, ParseException {
+	/**
+	 * Make session with logger information.
+	 * Throws java.net.ConnectException if connection timeout.
+	 * Throws MakeSessionFailedException if connection failure.
+	 * @param userData
+	 */
+	public void makeSession(final LoggerInfo userData) throws UnsupportedEncodingException, IOException, ParseException, MakeSessionFailedException {
 		HttpURLConnection httpConnection = makeSessionConnection();
 		JSONObject jsonSessionData = jiraLogJsonParser.toJsonObject(userData);
 		
 		sendJsonData(httpConnection, jsonSessionData);
 		
-		System.out.println("Response Code : " + httpConnection.getResponseCode());
-		
-		if( httpConnection.getResponseCode() == VALID_RESPONSE ){
+		int responseCode = httpConnection.getResponseCode();
+		if( responseCode == VALID_RESPONSE ){
 			String response = getResponse(httpConnection);
-			System.out.println("Response : " + response);
 			
 			JSONObject responseJson = (JSONObject) jiraLogJsonParser.parse(response);
 			setSessionName(jiraLogJsonParser.extractSessionName(responseJson));
 			setSessionValue(jiraLogJsonParser.extractSessionValue(responseJson));
+		} else if( responseCode == NEED_VERIFICATION_CODE) {
+			throw new MakeSessionFailedException("Need verification code.. Log in on site");
+		} else {
+			throw new MakeSessionFailedException("Logger information error, check it");
 		}
 	}
 	
-	public void sendPost(final LoggingData loggingData) throws MalformedURLException, ProtocolException, IOException {
+	/**
+	 * Send post request for each logging data.
+	 * Returns failed id list(empty if no failure). 
+	 * @param loggingData
+	 * @return send request failed id list  
+	 */
+	public List<String> sendPost(final LoggingData loggingData) throws MalformedURLException, ProtocolException, IOException {
 		JSONArray loggingJsonArrayData = jiraLogJsonParser.toJsonArray(loggingData);
 		
+		List<String> failedList = new ArrayList<String>();
 		for (int i = 0; i < loggingJsonArrayData.size(); i++) {
 			JSONObject loggingJsonData = (JSONObject) loggingJsonArrayData.get(i);
+			
+			JSONObject author = (JSONObject) loggingJsonData.get(JiraLogJsonParser.JSON_AUTHOR);
+			String authorName = (String) author.get(JiraLogJsonParser.JSON_AUTHOR_NAME);
 			
 			HttpURLConnection httpConnection = makeWorkLogConnection();
 			sendJsonData(httpConnection, loggingJsonData);
 			
-			System.out.println("Response Code : " + httpConnection.getResponseCode());
-
-			if( httpConnection.getResponseCode() == VALID_RESPONSE ) {
-				String response = getResponse(httpConnection);
-				System.out.println("Response : " + response);
+			if( httpConnection.getResponseCode() != VALID_RESPONSE ) {
+				failedList.add(authorName);
 			}
 		}
+		return failedList;
 	}
 
+	/**
+	 * Make HttpURLConnection for session
+	 * @return HttpURLConnection
+	 */
 	private HttpURLConnection makeSessionConnection() throws MalformedURLException, IOException, ProtocolException {
 		URL urlObject = new URL(getJiraServer() + SESSION_URL);
 		HttpURLConnection httpConnection = (HttpURLConnection) urlObject.openConnection();
@@ -106,6 +132,11 @@ public class ServerArbiter {
 		return httpConnection;
 	}
 	
+	/**
+	 * 
+	 * Make HttpURLConnection for work log
+	 * @return HttpURLConnection
+	 */
 	private HttpURLConnection makeWorkLogConnection() throws MalformedURLException, IOException, ProtocolException {
 		URL urlObject = new URL(jiraServer + WORKLOG_URL);
 		HttpURLConnection httpConnection = (HttpURLConnection) urlObject.openConnection();         
@@ -122,6 +153,11 @@ public class ServerArbiter {
 		return httpConnection;
 	}
 	
+	/**
+	 * Send jsonData on httpConnection with UTF-8 format
+	 * @param httpConnection
+	 * @param jsonData
+	 */
 	private void sendJsonData(final HttpURLConnection httpConnection, final JSONObject jsonData)
 			throws UnsupportedEncodingException, IOException {
 		OutputStreamWriter writer = new OutputStreamWriter(httpConnection.getOutputStream(), "UTF-8");
@@ -129,6 +165,11 @@ public class ServerArbiter {
         writer.close();
 	}
 
+	/**
+	 * Get response from httpConnection on String
+	 * @param httpConnection
+	 * @return response on String
+	 */
 	private String getResponse(final HttpURLConnection httpConnection) throws IOException {
 		StringBuffer responseBuffer = new StringBuffer();
 		BufferedReader inputBufferReader = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
@@ -141,36 +182,5 @@ public class ServerArbiter {
 		
 		return responseBuffer.toString();
 	}
-
-/*
-	public void sendGet() throws Exception {
-		
-		String url = "http://211.116.223.43:8080/plugins/servlet/tempo-getWorklog/?dateFrom=2016-12-19&dateTo=2016-12-19&format=xml&diffOnly=false&tempoApiToken=cf372508-994d-4e73-a300-cc4b76f13746";
-
-		URL obj = new URL(url);
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-		// optional default is GET
-		con.setRequestMethod("GET");
-
-		//add request header
-		con.setRequestProperty("User-Agent", "Mozilla/5.0");
-
-		int responseCode = con.getResponseCode();
-		System.out.println("\nSending 'GET' request to URL : " + url);
-		System.out.println("Response Code : " + responseCode);
-
-		BufferedReader in = new BufferedReader(
-		        new InputStreamReader(con.getInputStream()));
-		String inputLine;
-		StringBuffer response = new StringBuffer();
-
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
-		}
-		in.close();
-		//print result
-		System.out.println(inputLine);
-	}
-*/
+	
 }

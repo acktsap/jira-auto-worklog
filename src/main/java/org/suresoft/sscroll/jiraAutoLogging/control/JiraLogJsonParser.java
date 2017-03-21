@@ -8,24 +8,24 @@ import org.suresoft.sscroll.jiraAutoLogging.entity.LoggingData;
 
 public class JiraLogJsonParser extends JSONParser {
 	
-	private static final String JSON_USER_ID = "username";
-	private static final String JSON_USER_PASSWORD = "password";
+	public static final String JSON_USER_ID = "username";
+	public static final String JSON_USER_PASSWORD = "password";
 	
-	private static final String JSON_SESSION = "session";
-	private static final String JSON_SESSION_NAME = "name";
-	private static final String JSON_SESSION_VALUE = "value";
+	public static final String JSON_SESSION = "session";
+	public static final String JSON_SESSION_NAME = "name";
+	public static final String JSON_SESSION_VALUE = "value";
 	
-	private static final String JSON_AUTHOR = "author";
-	private static final String JSON_AUTHOR_NAME = "name";
+	public static final String JSON_AUTHOR = "author";
+	public static final String JSON_AUTHOR_NAME = "name";
 	
-	private static final String JSON_ISSUE = "issue";
-	private static final String JSON_ISSUE_KEY = "key";
-	private static final String JSON_ISSUE_RES = "remainingEstimateSeconds";
+	public static final String JSON_ISSUE = "issue";
+	public static final String JSON_ISSUE_KEY = "key";
+	public static final String JSON_ISSUE_RES = "remainingEstimateSeconds";
 	
-	private static final String JSON_DATE_STARTED = "dateStarted";
-	private static final String JSON_TIME_SPENT_SECONDS = "timeSpentSeconds";
-	private static final String JSON_BILLED_SECONDS = "billedSeconds";
-	private static final String JSON_COMMENT = "comment";
+	public static final String JSON_DATE_STARTED = "dateStarted";
+	public static final String JSON_TIME_SPENT_SECONDS = "timeSpentSeconds";
+	public static final String JSON_BILLED_SECONDS = "billedSeconds";
+	public static final String JSON_COMMENT = "comment";
 	
 	
 	private static JiraLogJsonParser jiraLogJsonParser = null;

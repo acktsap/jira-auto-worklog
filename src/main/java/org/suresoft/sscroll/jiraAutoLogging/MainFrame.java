@@ -13,11 +13,6 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.rmi.ConnectException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -39,6 +35,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.text.JTextComponent;
 
 import org.suresoft.sscroll.jiraAutoLogging.control.DateLabelFormatter;
+import org.suresoft.sscroll.jiraAutoLogging.control.JiraAutoLoggingException.MakeSessionFailedException;
 import org.suresoft.sscroll.jiraAutoLogging.control.ServerArbiter;
 import org.suresoft.sscroll.jiraAutoLogging.control.XmlParser;
 import org.suresoft.sscroll.jiraAutoLogging.entity.LoggerInfo;
@@ -51,6 +48,7 @@ import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
 public class MainFrame extends JFrame implements ActionListener {
 
+	
 	/**
 	 * 
 	 */
@@ -58,7 +56,10 @@ public class MainFrame extends JFrame implements ActionListener {
 	private static final String FILE_NAME = "information.xml";
 	private static final String TITLE = "Jira logging";
 	
-	private static final int FRAME_WIDTH = 410;
+	private static final Color POSTIVE_COLOR = new Color(0, 180, 0);
+	private static final Color NEGATIVE_COLOR = Color.RED;
+	
+	private static final int FRAME_WIDTH = 400;
 	private static final int FRAME_HEIGHT = 570;
 	
 	private ArrayList<InputChecker> inputCheckers;
@@ -66,7 +67,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
 	private JTextField ipTextField;
 	private JTextField portTextField;
-	private JTextField autherTextField;
+	private JTextField loggerTextField;
 	private JPasswordField passwordTextField;
 
 	private JTextField issueKeyTextField;
@@ -74,6 +75,8 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JDatePickerImpl datePicker;
 	private JTextField timeSpentTextField;
 	private JTextArea commentTextArea;
+	
+	private JLabel sendResultTextField;
 	
 	public MainFrame() {
 		super(TITLE);
@@ -121,21 +124,21 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 
 	private Component buildLoggerField() {
-		autherTextField = new JTextField(8);
+		loggerTextField = new JTextField(8);
 		passwordTextField = new JPasswordField(10);
 		
 		JPanel loggerDataPanel = new JPanel();
 		loggerDataPanel.setLayout(new BoxLayout(loggerDataPanel, BoxLayout.Y_AXIS));
 		loggerDataPanel.setPreferredSize(new Dimension(FRAME_WIDTH, 85));
 		loggerDataPanel.setBorder(buildTitleBorder("Logger Information"));
-		loggerDataPanel.add(buildPanelWithLabel("Author Id", autherTextField, new AuthorIdChecker(autherTextField)));
+		loggerDataPanel.add(buildPanelWithLabel("Logger Id", loggerTextField, new IdChecker(loggerTextField)));
 		loggerDataPanel.add(buildPanelWithLabel("Password", passwordTextField, new PasswordChecker(passwordTextField)));
 		
 		return loggerDataPanel;
 	}
 
 	private Component buildLoggingDataField() {
-		issueKeyTextField = new JTextField(8);
+		issueKeyTextField = new JTextField(12);
 		userIdListTextArea = buildJTextArea(2, 20);
 		datePicker = buildDatePicker();
 		timeSpentTextField = new JTextField(8);
@@ -144,7 +147,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		JPanel loggingDataPanel = new JPanel();
 		loggingDataPanel.setLayout(new BoxLayout(loggingDataPanel, BoxLayout.Y_AXIS));
 		loggingDataPanel.setBorder(buildTitleBorder("Logging Data"));
-		
 		loggingDataPanel.add(buildPanelWithLabel("Issue key", issueKeyTextField, new IssueKeyChecker(issueKeyTextField)));
 		loggingDataPanel.add(buildPanelWithLabel("User Id List", userIdListTextArea, new UserIdListChecker(userIdListTextArea)));
 		loggingDataPanel.add(buildPanelWithLabel("Date", datePicker));
@@ -155,8 +157,17 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 
 	private Component buildButtonField() {
+		JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		
+		sendResultTextField = new JLabel();
+		sendResultTextField.setHorizontalAlignment(SwingConstants.LEFT);
+		sendResultTextField.setPreferredSize(new Dimension(220, 20));
+		sendResultTextField.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
+		buttonsPanel.add(sendResultTextField);
+		
 		JButton logWorkButton = new JButton("Log Work");
 		logWorkButton.addActionListener(this);
+		buttonsPanel.add(logWorkButton);
 		
 		JButton exitButton = new JButton("Exit");
 		exitButton.addActionListener(new ActionListener() {
@@ -165,9 +176,6 @@ public class MainFrame extends JFrame implements ActionListener {
 				MainFrame.this.dispose();
 			}
 		});
-		
-		JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		buttonsPanel.add(logWorkButton);
 		buttonsPanel.add(exitButton);
 		
 		return buttonsPanel;
@@ -268,7 +276,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		ipTextField.setText(xmlFileController.getValue(XmlParser.Tag.IP));
 		portTextField.setText(xmlFileController.getValue(XmlParser.Tag.PORT));
-		autherTextField.setText(xmlFileController.getValue(XmlParser.Tag.AUTHOR));
+		loggerTextField.setText(xmlFileController.getValue(XmlParser.Tag.AUTHOR));
 //		passwordTextField.setText(xmlFileParser.getValue(XmlParser.Tag.PASSWORD)); // no password for security
 
 		issueKeyTextField.setText(xmlFileController.getValue(XmlParser.Tag.ISSUE_KEY));
@@ -310,7 +318,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		xmlParser.setElementValue(XmlParser.Tag.IP, ipTextField.getText());
 		xmlParser.setElementValue(XmlParser.Tag.PORT, portTextField.getText());
-		xmlParser.setElementValue(XmlParser.Tag.AUTHOR, autherTextField.getText());
+		xmlParser.setElementValue(XmlParser.Tag.AUTHOR, loggerTextField.getText());
 //		xmlFileController.setElementValue(XmlParser.Tag.PASSWORD, passwordTextField.getText());
 
 		xmlParser.setElementValue(XmlParser.Tag.ISSUE_KEY, issueKeyTextField.getText());
@@ -331,30 +339,37 @@ public class MainFrame extends JFrame implements ActionListener {
 				String port = portTextField.getText();
 				serverArbiter.setJiraServer(ip, port);
 				
-				System.out.println("ip : " + ip + " , port : " + port);
-				
 				LoggerInfo loggerInfo = getLoggerInfo();
 				serverArbiter.makeSession(loggerInfo);
 				
 				LoggingData loggingData = getLoggingData();
-				serverArbiter.sendPost(loggingData);
+				List<String> failedList = serverArbiter.sendPost(loggingData);
+				if( failedList.isEmpty() ) {
+					setOkResult();
+				} else {
+					setResultAlertText("Failed for " + failedList);
+				}
+				
 			} else {
-				System.err.println("fuck off!!");
+				setResultAlertText("Fill the data");
 			}
-			
-		} catch (ConnectException e ) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (ProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (java.net.ConnectException e) {
+			setResultAlertText("Connection error, check server information");
+		} catch (MakeSessionFailedException e) {
+			setResultAlertText(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void setOkResult() {
+		sendResultTextField.setForeground(POSTIVE_COLOR);	// light green
+		sendResultTextField.setText("Success");
+	}
+	
+	private void setResultAlertText(final String alertText) {
+		sendResultTextField.setForeground(NEGATIVE_COLOR);
+		sendResultTextField.setText(alertText);
 	}
 	
 	private boolean isAllInputRight() {
@@ -370,10 +385,8 @@ public class MainFrame extends JFrame implements ActionListener {
 	private LoggerInfo getLoggerInfo() {
 		LoggerInfo loggerInfo = new LoggerInfo();
 		
-		loggerInfo.setId(autherTextField.getText());
+		loggerInfo.setId(loggerTextField.getText());
 		loggerInfo.setPassword(new String(passwordTextField.getPassword()));
-		
-		System.out.println("Author : " + loggerInfo.getId() + " , password : " + loggerInfo.getPassword());
 		
 		return loggerInfo;
 	}
@@ -390,15 +403,15 @@ public class MainFrame extends JFrame implements ActionListener {
 		loggingData.setTimeSpentSeconds(makeTimeBySeconds(timeSpent));
 		loggingData.setComment(commentTextArea.getText());
 		
-		System.out.println("Issue key : " + loggingData.getIssuekey());
-		System.out.print("Name list : ");
-		for( String name : loggingData.getNameList() ) {
-			System.out.print(name + " ");
-		}
-		System.out.println();
-		System.out.println("Date : " + loggingData.getDateStarted());
-		System.out.println("Time spent seconds : " + loggingData.getTimeSpentSeconds());
-		System.out.println("Comment : " + loggingData.getComment());
+//		System.out.println("Issue key : " + loggingData.getIssuekey());
+//		System.out.print("Name list : ");
+//		for( String name : loggingData.getNameList() ) {
+//			System.out.print(name + " ");
+//		}
+//		System.out.println();
+//		System.out.println("Date : " + loggingData.getDateStarted());
+//		System.out.println("Time spent seconds : " + loggingData.getTimeSpentSeconds());
+//		System.out.println("Comment : " + loggingData.getComment());
 		
 		return loggingData;
 	}
