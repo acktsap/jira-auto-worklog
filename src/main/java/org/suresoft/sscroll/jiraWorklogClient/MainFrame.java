@@ -1,5 +1,6 @@
 package org.suresoft.sscroll.jiraWorklogClient;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -101,7 +102,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		contentPane.add(buildServerField());
 		contentPane.add(buildLoggerField());
 		contentPane.add(buildLoggingDataField());
-		contentPane.add(buildButtonField());
+		contentPane.add(buildFooterField());
 		
 		fillDataFromFile();
 		updateAllAlertLabels();
@@ -156,18 +157,18 @@ public class MainFrame extends JFrame implements ActionListener {
 		return loggingDataPanel;
 	}
 
-	private Component buildButtonField() {
-		JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+	private Component buildFooterField() {
+		JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		
 		sendResultTextField = new JLabel();
 		sendResultTextField.setHorizontalAlignment(SwingConstants.LEFT);
-		sendResultTextField.setPreferredSize(new Dimension(220, 20));
+		sendResultTextField.setPreferredSize(new Dimension(210, 10));
 		sendResultTextField.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
-		buttonsPanel.add(sendResultTextField);
+		footerPanel.add(sendResultTextField, BorderLayout.WEST);
 		
 		JButton logWorkButton = new JButton("Log Work");
 		logWorkButton.addActionListener(this);
-		buttonsPanel.add(logWorkButton);
+		footerPanel.add(logWorkButton, BorderLayout.EAST);
 		
 		JButton exitButton = new JButton("Exit");
 		exitButton.addActionListener(new ActionListener() {
@@ -176,9 +177,9 @@ public class MainFrame extends JFrame implements ActionListener {
 				MainFrame.this.dispose();
 			}
 		});
-		buttonsPanel.add(exitButton);
+		footerPanel.add(exitButton, BorderLayout.EAST);
 		
-		return buttonsPanel;
+		return footerPanel;
 	}
 
 	private TitledBorder buildTitleBorder(final String title) {
