@@ -35,7 +35,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.text.JTextComponent;
 
 import org.suresoft.sscroll.jiraWorklogClient.control.DateLabelFormatter;
-import org.suresoft.sscroll.jiraWorklogClient.control.JiraAutoLoggingException.MakeSessionFailedException;
+import org.suresoft.sscroll.jiraWorklogClient.control.JiraWorklogClientException.MakeSessionFailedException;
 import org.suresoft.sscroll.jiraWorklogClient.control.ServerArbiter;
 import org.suresoft.sscroll.jiraWorklogClient.control.XmlParser;
 import org.suresoft.sscroll.jiraWorklogClient.entity.LoggerInfo;
