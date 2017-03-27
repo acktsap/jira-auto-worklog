@@ -1,4 +1,4 @@
-package org.suresoft.sscroll.jiraAutoLogging;
+package org.suresoft.sscroll.jiraWorklogClient;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -34,12 +34,12 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.JTextComponent;
 
-import org.suresoft.sscroll.jiraAutoLogging.control.DateLabelFormatter;
-import org.suresoft.sscroll.jiraAutoLogging.control.JiraAutoLoggingException.MakeSessionFailedException;
-import org.suresoft.sscroll.jiraAutoLogging.control.ServerArbiter;
-import org.suresoft.sscroll.jiraAutoLogging.control.XmlParser;
-import org.suresoft.sscroll.jiraAutoLogging.entity.LoggerInfo;
-import org.suresoft.sscroll.jiraAutoLogging.entity.LoggingData;
+import org.suresoft.sscroll.jiraWorklogClient.control.DateLabelFormatter;
+import org.suresoft.sscroll.jiraWorklogClient.control.JiraAutoLoggingException.MakeSessionFailedException;
+import org.suresoft.sscroll.jiraWorklogClient.control.ServerArbiter;
+import org.suresoft.sscroll.jiraWorklogClient.control.XmlParser;
+import org.suresoft.sscroll.jiraWorklogClient.entity.LoggerInfo;
+import org.suresoft.sscroll.jiraWorklogClient.entity.LoggingData;
 
 import net.sourceforge.jdatepicker.DateModel;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;

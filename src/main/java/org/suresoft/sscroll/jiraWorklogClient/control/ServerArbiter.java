@@ -1,4 +1,4 @@
-package org.suresoft.sscroll.jiraAutoLogging.control;
+package org.suresoft.sscroll.jiraWorklogClient.control;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,9 +15,9 @@ import java.util.List;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
-import org.suresoft.sscroll.jiraAutoLogging.control.JiraAutoLoggingException.MakeSessionFailedException;
-import org.suresoft.sscroll.jiraAutoLogging.entity.LoggerInfo;
-import org.suresoft.sscroll.jiraAutoLogging.entity.LoggingData;
+import org.suresoft.sscroll.jiraWorklogClient.control.JiraAutoLoggingException.MakeSessionFailedException;
+import org.suresoft.sscroll.jiraWorklogClient.entity.LoggerInfo;
+import org.suresoft.sscroll.jiraWorklogClient.entity.LoggingData;
 
 public class ServerArbiter {
 	

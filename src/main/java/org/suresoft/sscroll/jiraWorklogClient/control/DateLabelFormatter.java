@@ -1,4 +1,4 @@
-package org.suresoft.sscroll.jiraAutoLogging.control;
+package org.suresoft.sscroll.jiraWorklogClient.control;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

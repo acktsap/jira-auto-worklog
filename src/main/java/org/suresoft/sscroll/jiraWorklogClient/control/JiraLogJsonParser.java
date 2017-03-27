@@ -1,10 +1,10 @@
-package org.suresoft.sscroll.jiraAutoLogging.control;
+package org.suresoft.sscroll.jiraWorklogClient.control;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.suresoft.sscroll.jiraAutoLogging.entity.LoggerInfo;
-import org.suresoft.sscroll.jiraAutoLogging.entity.LoggingData;
+import org.suresoft.sscroll.jiraWorklogClient.entity.LoggerInfo;
+import org.suresoft.sscroll.jiraWorklogClient.entity.LoggingData;
 
 public class JiraLogJsonParser extends JSONParser {
 	

@@ -1,4 +1,4 @@
-package org.suresoft.sscroll.jiraAutoLogging.entity;
+package org.suresoft.sscroll.jiraWorklogClient.entity;
 
 public class LoggerInfo {
 	private String id;

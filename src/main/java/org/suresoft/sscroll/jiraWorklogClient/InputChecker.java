@@ -1,4 +1,4 @@
-package org.suresoft.sscroll.jiraAutoLogging;
+package org.suresoft.sscroll.jiraWorklogClient;
 
 import java.awt.Color;
 import java.util.regex.Matcher;
