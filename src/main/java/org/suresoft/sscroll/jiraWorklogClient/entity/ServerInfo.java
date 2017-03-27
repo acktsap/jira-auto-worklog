@@ -1,10 +1,10 @@
 package org.suresoft.sscroll.jiraWorklogClient.entity;
 
-public class ServerInfo {
+public class ServerInfo implements EntityInterface {
 	private String ip;
 	private String port;
 
-	public String getIp() {
+	public String getIP() {
 		return ip;
 	}
 
@@ -18,5 +18,14 @@ public class ServerInfo {
 
 	public void setPort(String port) {
 		this.port = port;
+	}
+
+	@Override
+	public String getSummary() {
+		StringBuffer summaryBuffer = new StringBuffer();
+		
+		summaryBuffer.append("Server : " + getIP() + ":" + getPort() + "\n");
+		
+		return summaryBuffer.toString();
 	}
 }

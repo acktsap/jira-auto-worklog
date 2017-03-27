@@ -1,6 +1,6 @@
 package org.suresoft.sscroll.jiraWorklogClient.entity;
 
-public class LoggerInfo {
+public class LoggerInfo implements EntityInterface {
 	private String id;
 	private String password;
 
@@ -18,5 +18,14 @@ public class LoggerInfo {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	@Override
+	public String getSummary() {
+		StringBuffer summaryBuffer = new StringBuffer();
+		
+		summaryBuffer.append("User id : " + getId() + "\n");
+		
+		return summaryBuffer.toString();
 	}
 }
