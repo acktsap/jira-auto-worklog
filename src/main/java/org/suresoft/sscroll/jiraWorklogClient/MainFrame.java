@@ -41,6 +41,7 @@ import org.suresoft.sscroll.jiraWorklogClient.control.ServerArbiter;
 import org.suresoft.sscroll.jiraWorklogClient.control.XmlParser;
 import org.suresoft.sscroll.jiraWorklogClient.entity.LoggerInfo;
 import org.suresoft.sscroll.jiraWorklogClient.entity.LoggingData;
+import org.suresoft.sscroll.jiraWorklogClient.entity.ServerInfo;
 
 import net.sourceforge.jdatepicker.DateModel;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
@@ -336,14 +337,13 @@ public class MainFrame extends JFrame implements ActionListener {
 	public void actionPerformed(final ActionEvent event) {
 		try {
 			if( isAllInputRight() ) {
-				String ip = ipTextField.getText();
-				String port = portTextField.getText();
-				serverArbiter.setJiraServer(ip, port);
-				
+				ServerInfo serverInfo = getServerInfo();
 				LoggerInfo loggerInfo = getLoggerInfo();
+				LoggingData loggingData = getLoggingData();
+				
+				serverArbiter.setJiraServer(serverInfo);
 				serverArbiter.makeSession(loggerInfo);
 				
-				LoggingData loggingData = getLoggingData();
 				List<String> failedList = serverArbiter.sendPost(loggingData);
 				if( failedList.isEmpty() ) {
 					setOkResult();
@@ -381,6 +381,15 @@ public class MainFrame extends JFrame implements ActionListener {
 			}
 		}
 		return result;
+	}
+	
+	private ServerInfo getServerInfo() {
+		ServerInfo serverInfo = new ServerInfo();
+		
+		serverInfo.setIp(ipTextField.getText());
+		serverInfo.setPort(portTextField.getText());
+		
+		return serverInfo;
 	}
 	
 	private LoggerInfo getLoggerInfo() {

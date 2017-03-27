@@ -18,6 +18,7 @@ import org.json.simple.parser.ParseException;
 import org.suresoft.sscroll.jiraWorklogClient.control.JiraWorklogClientException.MakeSessionFailedException;
 import org.suresoft.sscroll.jiraWorklogClient.entity.LoggerInfo;
 import org.suresoft.sscroll.jiraWorklogClient.entity.LoggingData;
+import org.suresoft.sscroll.jiraWorklogClient.entity.ServerInfo;
 
 public class ServerArbiter {
 	
@@ -35,12 +36,12 @@ public class ServerArbiter {
 		jiraLogJsonParser = JiraLogJsonParser.getInstance();
 	}
 	
-	public void setJiraServer(final String ip, final String port){
+	public void setJiraServer(final ServerInfo serverInfo){
 		jiraServer = new String();
 		jiraServer += "http://";
-		jiraServer += ip;
+		jiraServer += serverInfo.getIp();
 		jiraServer += ":";
-		jiraServer += port;
+		jiraServer += serverInfo.getPort();
 	}
 	
 	public String getJiraServer(){
