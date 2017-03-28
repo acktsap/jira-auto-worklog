@@ -199,7 +199,9 @@ class TimeSpentChecker extends InputChecker {
 
 	@Override
 	protected Pattern getPattern() {
-		return Pattern.compile("^([1-5]?[0-9]|60)m|([1-9]?\\d+h)( +([1-5]?[0-9]|60)m)?$");
+		String hourRegex = "[1-9][0-9]*h";
+		String minuteRegex = "[1-9][0-9]*m";	// should it "([1-9]|[1-5][0-9]|60)m"?
+		return Pattern.compile("^(" + hourRegex + "|" + minuteRegex + "|" + hourRegex + " " + minuteRegex + ")$");
 	}
 
 	@Override
@@ -209,7 +211,7 @@ class TimeSpentChecker extends InputChecker {
 	
 	@Override
 	protected String getRightExample() {
-		return "ex) 1h 30m, 2h, 45m";
+		return "ex) 2h, 45m, 1h 30m";
 	}
 
 }
@@ -222,7 +224,7 @@ class BlankChecker extends InputChecker {
 
 	@Override
 	protected Pattern getPattern() {
-		return Pattern.compile("^.+$");
+		return Pattern.compile("^(.|\n)+$");
 	}
 
 	@Override
