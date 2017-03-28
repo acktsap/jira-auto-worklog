@@ -52,7 +52,7 @@
 					<!-- MainClass -->
 					<archive>
 						<manifest>
-							<mainClass>org.suresoft.sscroll.jiraWorklogClient.MainFrame</mainClass>
+							<mainClass>org.suresoft.sscroll.jiraWorklogClient.boundary.MainFrame</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
