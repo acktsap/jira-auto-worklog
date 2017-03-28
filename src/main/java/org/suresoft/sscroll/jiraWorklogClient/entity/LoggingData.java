@@ -2,6 +2,8 @@ package org.suresoft.sscroll.jiraWorklogClient.entity;
 
 import java.util.List;
 
+import org.suresoft.sscroll.jiraWorklogClient.boundary.TimeFormatter;
+
 
 public class LoggingData implements EntityInterface {
 
@@ -82,7 +84,7 @@ public class LoggingData implements EntityInterface {
 		}
 		summaryBuffer.append("\n");
 		summaryBuffer.append("Date : " + getDateStarted() + "\n");
-		summaryBuffer.append("Time spent seconds : " + getTimeSpentSeconds() + "\n");
+		summaryBuffer.append("Time spent : " + TimeFormatter.secondToTime(getTimeSpentSeconds()) + "\n");
 		summaryBuffer.append("Comment : " + getComment() + "\n");
 		
 		return summaryBuffer.toString();

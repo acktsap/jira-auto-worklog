@@ -1,4 +1,4 @@
-package org.suresoft.sscroll.jiraWorklogClient.control;
+package org.suresoft.sscroll.jiraWorklogClient.boundary;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,12 +17,15 @@ public class DateLabelFormatter extends AbstractFormatter {
     private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
 	
 	@Override
-	public Object stringToValue(String text) throws ParseException {
-		return dateFormatter.parseObject(text);
+	public Object stringToValue(final String text) throws ParseException {
+		if( text != null ) {
+			return dateFormatter.parseObject(text);
+		}
+		return null;
 	}
 
 	@Override
-	public String valueToString(Object value) throws ParseException {
+	public String valueToString(final Object value) throws ParseException {
 		if (value != null) {
             Calendar cal = (Calendar) value;
             return dateFormatter.format(cal.getTime());

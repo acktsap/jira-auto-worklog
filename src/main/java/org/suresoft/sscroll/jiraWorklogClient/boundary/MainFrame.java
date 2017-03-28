@@ -1,4 +1,4 @@
-package org.suresoft.sscroll.jiraWorklogClient;
+package org.suresoft.sscroll.jiraWorklogClient.boundary;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -35,7 +35,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.JTextComponent;
 
-import org.suresoft.sscroll.jiraWorklogClient.control.DateLabelFormatter;
 import org.suresoft.sscroll.jiraWorklogClient.control.JiraWorklogClientException.MakeSessionFailedException;
 import org.suresoft.sscroll.jiraWorklogClient.control.ServerArbiter;
 import org.suresoft.sscroll.jiraWorklogClient.control.XmlParser;
@@ -341,16 +340,17 @@ public class MainFrame extends JFrame implements ActionListener {
 				LoggerInfo loggerInfo = getLoggerInfo();
 				LoggingData loggingData = getLoggingData();
 				
-				serverArbiter.setJiraServer(serverInfo);
-				serverArbiter.makeSession(loggerInfo);
-				
-				List<String> failedList = serverArbiter.sendPost(loggingData);
-				if( failedList.isEmpty() ) {
-					setOkResult();
-				} else {
-					setResultAlertText("Failed for " + failedList);
+				if( ConfirmAlertBox.showConfirmDialog(serverInfo, loggerInfo, loggingData) == ConfirmAlertBox.LOG_WORK_RESPONSE ) {
+					serverArbiter.setJiraServer(serverInfo);
+					serverArbiter.makeSession(loggerInfo);
+
+					List<String> failedList = serverArbiter.sendPost(loggingData);
+					if (failedList.isEmpty()) {
+						setOkResult();
+					} else {
+						setResultAlertText("Failed for " + failedList);
+					}
 				}
-				
 			} else {
 				setResultAlertText("Fill the data");
 			}
@@ -375,7 +375,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	
 	private boolean isAllInputRight() {
 		boolean result = true;
-		for( InputChecker inputChecker : inputCheckers ) {
+		for( final InputChecker inputChecker : inputCheckers ) {
 			if( !inputChecker.isRight() ) {
 				result = false;
 			}
@@ -410,7 +410,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		loggingData.setNameList(getNameList());
 		loggingData.setDateStarted(getDate());
 		String timeSpent = timeSpentTextField.getText();
-		loggingData.setTimeSpentSeconds(makeTimeBySeconds(timeSpent));
+		loggingData.setTimeSpentSeconds(TimeFormatter.timeToSeconds(timeSpent));
 		loggingData.setComment(commentTextArea.getText());
 		
 //		System.out.println("Issue key : " + loggingData.getIssuekey());
@@ -442,29 +442,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		return date;
 	}
-	
-	private int makeTimeBySeconds(final String time) {
-		if( time.equals("") ) {
-			return 0;
-		}
-		
-		String[] splits = time.split(" ");
-		
-		int timeBySeconds = 0;
-		for( String split : splits ) {
-			if (split.charAt(split.length() - 1) == 'h'
-					|| split.charAt(split.length() - 1) == 'H') {
-				timeBySeconds += Integer.valueOf(split.substring(0, split.length() - 1)) * 3600;
-			} else if (split.charAt(split.length() - 1) == 'm'
-					|| split.charAt(split.length() - 1) == 'M') {
-				timeBySeconds += Integer.valueOf(split.substring(0, split.length() - 1)) * 60;
-			} else {
-				System.err.println("Wrong Input. ex) 6h 10m\n");
-			}
-		}
-		return timeBySeconds;
-	}
-
 	
 	public static void main(String[] args) throws Exception {
 		new MainFrame();

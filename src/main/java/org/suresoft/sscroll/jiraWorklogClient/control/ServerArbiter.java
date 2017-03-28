@@ -39,7 +39,7 @@ public class ServerArbiter {
 	public void setJiraServer(final ServerInfo serverInfo){
 		jiraServer = new String();
 		jiraServer += "http://";
-		jiraServer += serverInfo.getIp();
+		jiraServer += serverInfo.getIP();
 		jiraServer += ":";
 		jiraServer += serverInfo.getPort();
 	}
@@ -65,8 +65,8 @@ public class ServerArbiter {
 	}
 	
 	/**
-	 * Make session with logger information.
-	 * Throws java.net.ConnectException if connection timeout.
+	 * Make session with logger information.<br/>
+	 * Throws java.net.ConnectException if connection timeout.<br/>
 	 * Throws MakeSessionFailedException if connection failure.
 	 * @param userData
 	 */
@@ -91,8 +91,8 @@ public class ServerArbiter {
 	}
 	
 	/**
-	 * Send post request for each logging data.
-	 * Returns failed id list(empty if no failure). 
+	 * Send post request for each logging data.<br/>
+	 * Returns failed id list(empty if no failure).
 	 * @param loggingData
 	 * @return send request failed id list  
 	 */
@@ -117,7 +117,7 @@ public class ServerArbiter {
 	}
 
 	/**
-	 * Make HttpURLConnection for session
+	 * Make HttpURLConnection for session.
 	 * @return HttpURLConnection
 	 */
 	private HttpURLConnection makeSessionConnection() throws MalformedURLException, IOException, ProtocolException {
@@ -135,7 +135,7 @@ public class ServerArbiter {
 	
 	/**
 	 * 
-	 * Make HttpURLConnection for work log
+	 * Make HttpURLConnection for work log.
 	 * @return HttpURLConnection
 	 */
 	private HttpURLConnection makeWorkLogConnection() throws MalformedURLException, IOException, ProtocolException {
@@ -155,7 +155,7 @@ public class ServerArbiter {
 	}
 	
 	/**
-	 * Send jsonData on httpConnection with UTF-8 format
+	 * Send jsonData on httpConnection with UTF-8 format.
 	 * @param httpConnection
 	 * @param jsonData
 	 */
@@ -167,7 +167,7 @@ public class ServerArbiter {
 	}
 
 	/**
-	 * Get response from httpConnection on String
+	 * Get response from httpConnection on String.
 	 * @param httpConnection
 	 * @return response on String
 	 */
