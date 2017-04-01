@@ -356,6 +356,8 @@ public class MainFrame extends JFrame implements ActionListener {
 				LoggerInfo loggerInfo = getLoggerInfo();
 				LoggingData loggingData = getLoggingData();
 				
+				setResultAlertText("");
+				
 				if( ConfirmAlertBox.showConfirmDialog(serverInfo, loggerInfo, loggingData) == ConfirmAlertBox.LOG_WORK_RESPONSE ) {
 					serverArbiter.setJiraServer(serverInfo);
 					serverArbiter.makeSession(loggerInfo);
