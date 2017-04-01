@@ -26,7 +26,7 @@ public abstract class InputChecker {
 	}
 
 	public void updateAlertLabel() {
-		String inputText = inputComponent.getText();
+		String inputText = getInputText();
 		
 		if( alertLabel != null ) {
 			Pattern pattern = getPattern();
@@ -43,6 +43,10 @@ public abstract class InputChecker {
 		}
 	}
 
+	protected String getInputText() {
+		return inputComponent.getText();
+	}
+	
 	protected abstract Pattern getPattern();
 	protected abstract String getRightSignal();
 	protected abstract String getRightExample();
@@ -125,7 +129,7 @@ class PasswordChecker extends InputChecker {
 	public PasswordChecker(final JTextComponent inputComponent) {
 		super(inputComponent);
 	}
-
+	
 	@Override
 	protected Pattern getPattern() {
 		return Pattern.compile("^.+$");
@@ -148,7 +152,7 @@ class IssueKeyChecker extends InputChecker {
 	public IssueKeyChecker(final JTextComponent inputComponent) {
 		super(inputComponent);
 	}
-
+	
 	@Override
 	protected Pattern getPattern() {
 		return Pattern.compile("^\\w+-[1-9][0-9]*$");
@@ -179,7 +183,7 @@ class UserIdListChecker extends InputChecker {
 
 	@Override
 	protected String getRightSignal() {
-		String userIds = inputComponent.getText();
+		String userIds = getInputText();
 		String[] idList = userIds.split(" ");
 		return idList.length + " people";
 	}
