@@ -148,7 +148,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		JPanel loggingDataPanel = new JPanel();
 		loggingDataPanel.setLayout(new BoxLayout(loggingDataPanel, BoxLayout.Y_AXIS));
 		loggingDataPanel.setBorder(buildTitleBorder("Logging Data"));
-		loggingDataPanel.add(buildPanelWithLabel("Issue key", issueKeyComboBox));
+		loggingDataPanel.add(buildPanelWithLabel("Issue key", issueKeyComboBox, new IssueKeyChecker(issueKeyComboBox.getTextEditor())));
 		loggingDataPanel.add(buildPanelWithLabel("User Id List", userIdListTextArea, new UserIdListChecker(userIdListTextArea)));
 		loggingDataPanel.add(buildPanelWithLabel("Date", datePicker));
 		loggingDataPanel.add(buildPanelWithLabel("Time Spent", timeSpentTextField, new TimeSpentChecker(timeSpentTextField)));
@@ -215,7 +215,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		inputChecker.setAlertLabel(alertLabel);
 		inputCheckers.add(inputChecker);
 		
-		inputComponent.addFocusListener(new FocusListener() {
+		inputChecker.getInputComponent().addFocusListener(new FocusListener() {
 			
 			@Override
 			public void focusLost(FocusEvent e) {
@@ -363,6 +363,7 @@ public class MainFrame extends JFrame implements ActionListener {
 					List<String> failedList = serverArbiter.sendPost(loggingData);
 					if (failedList.isEmpty()) {
 						setOkResult();
+						issueKeyComboBox.addIssueKey(loggingData.getIssuekey());
 					} else {
 						setResultAlertText("Failed for " + failedList);
 					}

@@ -21,6 +21,10 @@ public abstract class InputChecker {
 		return isRight;
 	}
 	
+	public JTextComponent getInputComponent() {
+		return inputComponent;
+	}
+	
 	public void setAlertLabel(final JLabel alertLabel) {
 		this.alertLabel = alertLabel;
 	}

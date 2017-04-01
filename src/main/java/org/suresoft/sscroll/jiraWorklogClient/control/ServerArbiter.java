@@ -94,7 +94,7 @@ public class ServerArbiter {
 	 * Send post request for each logging data.<br/>
 	 * Returns failed id list(empty if no failure).
 	 * @param loggingData
-	 * @return send request failed id list  
+	 * @return failed id list  
 	 */
 	public List<String> sendPost(final LoggingData loggingData) throws MalformedURLException, ProtocolException, IOException {
 		JSONArray loggingJsonArrayData = jiraLogJsonParser.toJsonArray(loggingData);
