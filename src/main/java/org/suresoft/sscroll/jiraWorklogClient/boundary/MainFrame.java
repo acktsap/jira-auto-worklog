@@ -280,7 +280,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		loggerTextField.setText(xmlFileController.getValue(XmlTag.AUTHOR));
 //		passwordTextField.setText(xmlFileParser.getValue(XmlParser.Tag.PASSWORD)); // no password for security
 
-		issueKeyComboBox.addItems(xmlFileController.getValueList(XmlTag.ISSUE_KEY_LIST));
+		issueKeyComboBox.addIssues(xmlFileController.getValueList(XmlTag.ISSUE_KEY_LIST));
 		
 		// TODO temp.. just a stub
 		StringBuilder idListStringBuilder = new StringBuilder();
