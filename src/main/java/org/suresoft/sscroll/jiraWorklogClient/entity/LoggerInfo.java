@@ -23,9 +23,9 @@ public class LoggerInfo implements EntityInterface {
 	@Override
 	public String getSummary() {
 		StringBuffer summaryBuffer = new StringBuffer();
-		
+
 		summaryBuffer.append("User id : " + getId() + "\n");
-		
+
 		return summaryBuffer.toString();
 	}
 }

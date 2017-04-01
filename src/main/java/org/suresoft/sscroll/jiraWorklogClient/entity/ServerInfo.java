@@ -23,9 +23,9 @@ public class ServerInfo implements EntityInterface {
 	@Override
 	public String getSummary() {
 		StringBuffer summaryBuffer = new StringBuffer();
-		
+
 		summaryBuffer.append("Server : " + getIP() + ":" + getPort() + "\n");
-		
+
 		return summaryBuffer.toString();
 	}
 }

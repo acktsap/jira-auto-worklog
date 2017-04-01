@@ -210,7 +210,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		JLabel alertLabel = new JLabel();
 		alertLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
 		alertLabel.setHorizontalAlignment(JLabel.LEFT);
-		alertLabel.setBorder(new EmptyBorder(0, 5, 0, 0));	// left border
+		alertLabel.setBorder(new EmptyBorder(0, 1, 0, 0));	// left border
 		
 		inputChecker.setAlertLabel(alertLabel);
 		inputCheckers.add(inputChecker);
@@ -333,7 +333,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		xmlParser.setValue(XmlTag.AUTHOR, loggerTextField.getText());
 //		xmlFileController.setElementValue(XmlParser.Tag.PASSWORD, passwordTextField.getText());
 
-		xmlParser.setValueList(XmlTag.ISSUE_KEY_LIST, issueKeyComboBox.getIssueKeys());
+		xmlParser.setValueList(XmlTag.ISSUE_KEY_LIST, issueKeyComboBox.getIssues());
 		
 		// TODO temp.. just a stub
 		String[] names = userIdListTextArea.getText().split(" ");
@@ -365,7 +365,7 @@ public class MainFrame extends JFrame implements ActionListener {
 					List<String> failedList = serverArbiter.sendPost(loggingData);
 					if (failedList.isEmpty()) {
 						setOkResult();
-						issueKeyComboBox.addIssueKey(loggingData.getIssuekey());
+						issueKeyComboBox.addCurrentIssue();
 					} else {
 						setResultAlertText("Failed for " + failedList);
 					}
@@ -423,7 +423,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	private LoggingData getLoggingData() {
 		LoggingData loggingData = new LoggingData();
 		
-		loggingData.setIssuekey(issueKeyComboBox.getIssueKey());
+		loggingData.setIssuekey(issueKeyComboBox.getCurrentIssueKey());
 //		loggingData.setRemainingEstimateSeconds(0);
 		
 		loggingData.setNameList(getNameList());
