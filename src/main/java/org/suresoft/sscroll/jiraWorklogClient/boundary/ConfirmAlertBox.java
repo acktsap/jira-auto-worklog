@@ -4,7 +4,7 @@ import javax.swing.JOptionPane;
 
 import org.suresoft.sscroll.jiraWorklogClient.entity.EntityInterface;
 
-public class ConfirmAlertBox extends JOptionPane {
+public class ConfirmAlertBox {
 	/**
 	 * 
 	 */
@@ -29,7 +29,7 @@ public class ConfirmAlertBox extends JOptionPane {
 		
 		Object[] options = new Object[] { "Log work", "Cancel" };
 		
-		return showOptionDialog(null, confirmString, "Really?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+		return JOptionPane.showOptionDialog(null, confirmString, "Really?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 				options, options[0]);
 	}
 	
