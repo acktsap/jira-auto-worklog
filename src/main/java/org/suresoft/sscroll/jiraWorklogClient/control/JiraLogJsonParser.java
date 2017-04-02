@@ -51,12 +51,12 @@ public class JiraLogJsonParser extends JSONParser {
 	public JSONArray toJsonArray(final LoggingData loggingData) {
 		JSONArray jsonArray = new JSONArray();
 
-		for (int i = 0; i < loggingData.getNameList().size(); i++) {
+		for (int i = 0; i < loggingData.getUserList().size(); i++) {
 			JSONObject jsonObject = new JSONObject();
 
 			// author
 			JSONObject author = new JSONObject();
-			author.put(JSON_AUTHOR_NAME, loggingData.getNameList().get(i));
+			author.put(JSON_AUTHOR_NAME, loggingData.getUserList().get(i));
 			jsonObject.put(JSON_AUTHOR, author);
 			
 			// ISSUE_ISSUETYPE

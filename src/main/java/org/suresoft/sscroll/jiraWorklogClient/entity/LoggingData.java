@@ -9,7 +9,7 @@ public class LoggingData implements EntityInterface {
 	private String issuekey; // (ex. TP-1)
 	private int remainingEstimateSeconds = 0;
 
-	private List<String> nameList;
+	private List<String> userList;
 
 	private String dateStarted;
 	private int timeSpentSeconds;
@@ -32,12 +32,12 @@ public class LoggingData implements EntityInterface {
 		this.remainingEstimateSeconds = remainingEstimateSeconds;
 	}
 
-	public List<String> getNameList() {
-		return nameList;
+	public List<String> getUserList() {
+		return userList;
 	}
 
-	public void setNameList(List<String> nameList) {
-		this.nameList = nameList;
+	public void setUserList(final List<String> userList) {
+		this.userList = userList;
 	}
 
 	public String getDateStarted() {
@@ -78,7 +78,7 @@ public class LoggingData implements EntityInterface {
 
 		summaryBuffer.append("Issue key : " + getIssuekey() + "\n");
 		summaryBuffer.append("Name list : ");
-		for (final String name : getNameList()) {
+		for (final String name : getUserList()) {
 			summaryBuffer.append(name + " ");
 		}
 		summaryBuffer.append("\n");

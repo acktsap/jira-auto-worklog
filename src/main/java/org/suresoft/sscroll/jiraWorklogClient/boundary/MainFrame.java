@@ -15,7 +15,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -72,7 +71,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JPasswordField passwordTextField;
 
 	private IssueKeyComboBox issueKeyComboBox; 
-	private JTextArea userIdListTextArea;
+	private UserSelector userIdListSelector;
 	private JDatePickerImpl datePicker;
 	private JTextField timeSpentTextField;
 	private JTextArea commentTextArea;
@@ -140,7 +139,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
 	private Component buildLoggingDataField() {
 		issueKeyComboBox = new IssueKeyComboBox();
-		userIdListTextArea = buildJTextArea(2, 20);
+		userIdListSelector = new UserSelector(this);
 		datePicker = buildDatePicker();
 		timeSpentTextField = new JTextField(8);
 		commentTextArea = buildJTextArea(3, 20);
@@ -149,7 +148,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		loggingDataPanel.setLayout(new BoxLayout(loggingDataPanel, BoxLayout.Y_AXIS));
 		loggingDataPanel.setBorder(buildTitleBorder("Logging Data"));
 		loggingDataPanel.add(buildPanelWithLabel("Issue key", issueKeyComboBox, new IssueKeyChecker(issueKeyComboBox.getTextEditor())));
-		loggingDataPanel.add(buildPanelWithLabel("User Id List", userIdListTextArea, new UserIdListChecker(userIdListTextArea)));
+		loggingDataPanel.add(buildPanelWithLabel("User Id List", userIdListSelector));
 		loggingDataPanel.add(buildPanelWithLabel("Date", datePicker));
 		loggingDataPanel.add(buildPanelWithLabel("Time Spent", timeSpentTextField, new TimeSpentChecker(timeSpentTextField)));
 		loggingDataPanel.add(buildPanelWithLabel("Comment", commentTextArea, new BlankChecker(commentTextArea)));
@@ -272,30 +271,30 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 
 	private void fillDataFromFile() {
-		XmlParser xmlFileController = new XmlParser();
-		xmlFileController.parse(FILE_NAME);
+		XmlParser xmlParser = new XmlParser();
+		xmlParser.parse(FILE_NAME);
 		
-		ipTextField.setText(xmlFileController.getValue(XmlTag.IP));
-		portTextField.setText(xmlFileController.getValue(XmlTag.PORT));
-		loggerTextField.setText(xmlFileController.getValue(XmlTag.AUTHOR));
+		ipTextField.setText(xmlParser.getValue(XmlTag.IP));
+		portTextField.setText(xmlParser.getValue(XmlTag.PORT));
+		loggerTextField.setText(xmlParser.getValue(XmlTag.AUTHOR));
 //		passwordTextField.setText(xmlFileParser.getValue(XmlParser.Tag.PASSWORD)); // no password for security
 
-		issueKeyComboBox.addIssues(xmlFileController.getValueList(XmlTag.ISSUE_KEY_LIST));
+		issueKeyComboBox.addIssues(xmlParser.getValueList(XmlTag.ISSUE_KEY_LIST));
 		
-		// TODO temp.. just a stub
-		StringBuilder idListStringBuilder = new StringBuilder();
-		List<String> userIdList = xmlFileController.getValueList(XmlTag.ID_LIST);
-		for( int i = 0; i < userIdList.size(); ++i ) {
-			if( i != 0 ) {
-				idListStringBuilder.append(" ");
-			}
-			idListStringBuilder.append(userIdList.get(i));
-		}
-		userIdListTextArea.setText(idListStringBuilder.toString());
+		// TODO remove
+//		StringBuilder idListStringBuilder = new StringBuilder();
+//		List<String> userIdList = xmlFileController.getValueList(XmlTag.ID_LIST);
+//		for( int i = 0; i < userIdList.size(); ++i ) {
+//			if( i != 0 ) {
+//				idListStringBuilder.append(" ");
+//			}
+//			idListStringBuilder.append(userIdList.get(i));
+//		}
+		userIdListSelector.addUsers(xmlParser.getValueList(XmlTag.ID_LIST));
 		
 //		setDate(xmlFileController.getValue(XmlParser.Tag.DATE));	// don't save date
-		timeSpentTextField.setText(xmlFileController.getValue(XmlTag.TIME_SPENT));
-		commentTextArea.setText(xmlFileController.getValue(XmlTag.COMMENT));
+		timeSpentTextField.setText(xmlParser.getValue(XmlTag.TIME_SPENT));
+		commentTextArea.setText(xmlParser.getValue(XmlTag.COMMENT));
 	}
 	
 	@SuppressWarnings("unused")
@@ -335,11 +334,10 @@ public class MainFrame extends JFrame implements ActionListener {
 
 		xmlParser.setValueList(XmlTag.ISSUE_KEY_LIST, issueKeyComboBox.getIssues());
 		
-		// TODO temp.. just a stub
-		String[] names = userIdListTextArea.getText().split(" ");
-		List<String> idList = Arrays.asList(names);
-		xmlParser.setValueList(XmlTag.ID_LIST, idList);
-		
+		// TODO remove
+//		String[] names = userIdListTextArea.getText().split(" ");
+//		List<String> idList = Arrays.asList(names);
+		xmlParser.setValueList(XmlTag.ID_LIST, userIdListSelector.getUsers());
 //		xmlParser.setElementValue(XmlParser.Tag.DATE, getDate());
 		xmlParser.setValue(XmlTag.TIME_SPENT, timeSpentTextField.getText());
 		xmlParser.setValue(XmlTag.COMMENT, commentTextArea.getText());
@@ -426,7 +424,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		loggingData.setIssuekey(issueKeyComboBox.getCurrentIssueKey());
 //		loggingData.setRemainingEstimateSeconds(0);
 		
-		loggingData.setNameList(getNameList());
+		loggingData.setUserList(userIdListSelector.getUsers());
 		loggingData.setDateStarted(getDate());
 		String timeSpent = timeSpentTextField.getText();
 		loggingData.setTimeSpentSeconds(TimeFormatter.timeToSeconds(timeSpent));
@@ -445,11 +443,12 @@ public class MainFrame extends JFrame implements ActionListener {
 		return loggingData;
 	}
 
-	private List<String> getNameList() {
-		String[] nameListArray = userIdListTextArea.getText().split(" ");
-		List<String> nameList = new ArrayList<String>(Arrays.asList(nameListArray));
-		return nameList;
-	}
+	// TODO remove
+//	private List<String> getNameList() {
+//		String[] nameListArray = userIdListTextArea.getText().split(" ");
+//		List<String> nameList = new ArrayList<String>(Arrays.asList(nameListArray));
+//		return nameList;
+//	}
 
 	private String getDate() {
 		DateModel<?> dateModel = datePicker.getModel();
