@@ -1,5 +1,6 @@
 package org.suresoft.sscroll.jiraWorklogClient.boundary;
 
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -7,6 +8,8 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -19,6 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+
+import org.suresoft.sscroll.jiraWorklogClient.entity.User;
 
 public class UserSelectDialog extends JDialog implements ActionListener {
 
@@ -58,18 +63,19 @@ public class UserSelectDialog extends JDialog implements ActionListener {
 		checkBoxPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 		checkBoxPanel.setBorder(buildTitleBorder(USER_SELECT_DIALOG_TITLE));
 		
-		// TODO get id, name, selected state from parent
-		int nUser = 11;
-		for( int i = 0; i < nUser; ++i ) {
+		UserSelector userSelector = ((MainFrame) getParent()).getUserSelector();
+		
+		List<User> users = userSelector.getUsers();
+		for (final User user : users) {
 			JCheckBox testCheckBox = new JCheckBox();
-			testCheckBox.setName("id");
-			testCheckBox.setText("name");
-			testCheckBox.setSelected(true);
+			testCheckBox.setName(user.getId());
+			testCheckBox.setText(user.getName());
+			testCheckBox.setSelected(user.isSelected());
 			checkBoxPanel.add(testCheckBox);
 		}
 		
 		// set the height dynamically
-		checkBoxPanel.setPreferredSize(new Dimension(BOX_WIDTH, 30 + 32 * (nUser / 5 + 1)));
+		checkBoxPanel.setPreferredSize(new Dimension(BOX_WIDTH, 30 + 32 * (users.size() / 5 + 1)));
 		
 		return checkBoxPanel;
 	}

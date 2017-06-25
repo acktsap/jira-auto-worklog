@@ -71,7 +71,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JPasswordField passwordTextField;
 
 	private IssueKeyComboBox issueKeyComboBox; 
-	private UserSelector userIdListSelector;
+	private UserSelector userSelector;
 	private JDatePickerImpl datePicker;
 	private JTextField timeSpentTextField;
 	private JTextArea commentTextArea;
@@ -108,6 +108,10 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		setVisible(true);
 	}
+	
+	public UserSelector getUserSelector() {
+		return userSelector;
+	}
 
 	private JComponent buildServerField() {
 		ipTextField = new JTextField(9);
@@ -139,7 +143,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
 	private Component buildLoggingDataField() {
 		issueKeyComboBox = new IssueKeyComboBox();
-		userIdListSelector = new UserSelector(this);
+		userSelector = new UserSelector(this);
 		datePicker = buildDatePicker();
 		timeSpentTextField = new JTextField(8);
 		commentTextArea = buildJTextArea(3, 20);
@@ -148,7 +152,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		loggingDataPanel.setLayout(new BoxLayout(loggingDataPanel, BoxLayout.Y_AXIS));
 		loggingDataPanel.setBorder(buildTitleBorder("Logging Data"));
 		loggingDataPanel.add(buildPanelWithLabel("Issue key", issueKeyComboBox, new IssueKeyChecker(issueKeyComboBox.getTextEditor())));
-		loggingDataPanel.add(buildPanelWithLabel("User Id List", userIdListSelector));
+		loggingDataPanel.add(buildPanelWithLabel("User List", userSelector));
 		loggingDataPanel.add(buildPanelWithLabel("Date", datePicker));
 		loggingDataPanel.add(buildPanelWithLabel("Time Spent", timeSpentTextField, new TimeSpentChecker(timeSpentTextField)));
 		loggingDataPanel.add(buildPanelWithLabel("Comment", commentTextArea, new BlankChecker(commentTextArea)));
@@ -280,7 +284,7 @@ public class MainFrame extends JFrame implements ActionListener {
 //		passwordTextField.setText(xmlFileParser.getValue(XmlParser.Tag.PASSWORD)); // no password for security
 
 		issueKeyComboBox.setIssues(xmlParser.getIssueKeys());
-		userIdListSelector.setUsers(xmlParser.getUsers());
+		userSelector.setUsers(xmlParser.getUsers());
 //		setDate(xmlFileController.getValue(XmlParser.Tag.DATE));	// don't save date
 		timeSpentTextField.setText(xmlParser.getValue(XmlTag.TIME_SPENT));
 		commentTextArea.setText(xmlParser.getValue(XmlTag.COMMENT));
@@ -322,7 +326,7 @@ public class MainFrame extends JFrame implements ActionListener {
 //		xmlFileController.setElementValue(XmlParser.Tag.PASSWORD, passwordTextField.getText());
 
 		xmlParser.setIssueKeys(issueKeyComboBox.getIssues());
-		xmlParser.setUsers(userIdListSelector.getUsers());
+		xmlParser.setUsers(userSelector.getUsers());
 //		xmlParser.setElementValue(XmlParser.Tag.DATE, getDate());
 		xmlParser.setValue(XmlTag.TIME_SPENT, timeSpentTextField.getText());
 		xmlParser.setValue(XmlTag.COMMENT, commentTextArea.getText());
@@ -409,7 +413,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		loggingData.setIssuekey(issueKeyComboBox.getCurrentIssueKey());
 //		loggingData.setRemainingEstimateSeconds(0);
 		
-		loggingData.setUserList(userIdListSelector.getSelectedUsers());
+		loggingData.setUserList(userSelector.getSelectedUsers());
 		loggingData.setDateStarted(getDate());
 		String timeSpent = timeSpentTextField.getText();
 		loggingData.setTimeSpentSeconds(TimeFormatter.timeToSeconds(timeSpent));
