@@ -14,26 +14,28 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import org.suresoft.sscroll.jiraWorklogClient.entity.User;
+
 public class UserSelector extends JPanel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3134145354912847645L;
 	
-	private JTextArea selectedUsers;
+	private List<User> users;
+	private JTextArea selectedUsersTextArea;
 	private JButton button;
 	
 	public UserSelector(final JFrame parent) {
 //		super(new FlowLayout(FlowLayout.LEFT, 0, 0));	// flowlayout with no gap
 		super(new BorderLayout());
 		
-		selectedUsers = new JTextArea(2, 20);
-		selectedUsers.setEditable(false);
-		selectedUsers.setLineWrap(true);
-		selectedUsers.setBackground(super.getBackground()); 
-		selectedUsers.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-//		add(selectedUsers);
-		add(selectedUsers, BorderLayout.WEST);
+		selectedUsersTextArea = new JTextArea(2, 20);
+		selectedUsersTextArea.setEditable(false);
+		selectedUsersTextArea.setLineWrap(true);
+		selectedUsersTextArea.setBackground(super.getBackground()); 
+		selectedUsersTextArea.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+		add(selectedUsersTextArea, BorderLayout.WEST);
 		
 		button = new JButton("Edit");
 		button.setMargin(new Insets(1, 5, 1, 5));
@@ -43,27 +45,44 @@ public class UserSelector extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				new UserSelectDialog(parent);
 			}
+			
 		});
-//		add(button);
 		add(button, BorderLayout.EAST);
 	}
 	
-	public void addUsers(final List<String> users) {
-		// TODO just a stub
-		StringBuilder stringBuilder = new StringBuilder();
-		for( String user : users ) {
-			stringBuilder.append(user + " ");
-		}
-		selectedUsers.setText(stringBuilder.toString());
+	public void setUsers(final List<User> users) {
+		this.users = users;
+		updateSelectedUsersTextArea();
 	}
 
-	public List<String> getUsers() {
-		// TODO just a stub
-		List<String> users = new ArrayList<String>();
-		users.add("fuck");
-		users.add("suck");
-		users.add("ssuck");
+	public List<User> getUsers() {
 		return users;
+	}
+	
+	public List<String> getSelectedUsers() {
+		List<String> selectedUsers = new ArrayList<String>();
+		
+		for (final User user : users) {
+			if( user.isSelected() ) {
+				selectedUsers.add(user.getName());
+			}
+		}
+		
+		return selectedUsers;
+	}
+	
+	private void updateSelectedUsersTextArea() {
+		StringBuilder stringBuilder = new StringBuilder();
+		
+		for (final User userInfo : users) {
+			if( userInfo.isSelected() ) {
+				stringBuilder.append(userInfo.getName());
+				stringBuilder.append(" ");
+			}
+		}
+		stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+		
+		selectedUsersTextArea.setText(stringBuilder.toString());
 	}
 
 }

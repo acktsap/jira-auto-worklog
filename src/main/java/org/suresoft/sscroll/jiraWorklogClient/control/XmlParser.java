@@ -14,6 +14,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.suresoft.sscroll.jiraWorklogClient.entity.User;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -53,7 +54,7 @@ public class XmlParser {
 	}
 
 	/**
-	 * Get value whose tag is "tag"
+	 * Get value of the tag
 	 * @param tag
 	 * @return
 	 */
@@ -67,29 +68,60 @@ public class XmlParser {
 	}
 	
 	/**
-	 * Get list of value whose root tag is "tag" 
-	 * @param tag
-	 * @return list of value
+	 * Returns the issue keys by List of String
+	 * @return
 	 */
-	public List<String> getValueList(final XmlTag tag) {
-		ArrayList<String> valueList = new ArrayList<String>();
-		
-		if( tag != null && rootDocument != null ) {
-			if( tag.hasChild() ) {
-				Element nameListElement = (Element) rootElement.getElementsByTagName(tag.getName()).item(0);
-				NodeList nameList = nameListElement.getElementsByTagName(tag.getChildName());
+	public List<String> getIssueKeys() {
+		List<String> issueKeys = new ArrayList<String>();
 
-				for( int i = 0; i < nameList.getLength(); ++i ) {
-					Node nameNode = nameList.item(i);
-					if (nameNode.getNodeType() == Node.ELEMENT_NODE) {
-						Element nameElement = (Element) nameNode;
-						String textContent = nameElement.getTextContent();
-						valueList.add(textContent);
-					}
+		if ( rootDocument != null ) {
+			Element issueKeyListElement = (Element) rootElement.getElementsByTagName(XmlTag.ISSUE_KEY_LIST.getName()).item(0);
+			NodeList issueKeyNodeList = issueKeyListElement.getElementsByTagName(XmlTag.ISSUE_KEY.getName());
+
+			for (int i = 0; i < issueKeyNodeList.getLength(); ++i) {
+				Node issueKeyNode = issueKeyNodeList.item(i);
+				
+				if (issueKeyNode.getNodeType() == Node.ELEMENT_NODE) {
+					Element issueKeyElement = (Element) issueKeyNode;
+					issueKeys.add(issueKeyElement.getTextContent());
 				}
-			} 
+			}
 		}
-		return valueList;
+
+		return issueKeys;
+	}
+
+	/**
+	 * Returns the users by List of User
+	 * @return
+	 */
+	public List<User> getUsers() {
+		List<User> users = new ArrayList<User>();
+		
+		if (rootDocument != null) {
+			Element userListElement = (Element) rootElement.getElementsByTagName(XmlTag.USER_LIST.getName()).item(0);
+			NodeList userNodeList = userListElement.getElementsByTagName(XmlTag.USER.getName());
+
+			for (int i = 0; i < userNodeList.getLength(); ++i) {
+				Node userNode = userNodeList.item(i);
+				
+				if (userNode.getNodeType() == Node.ELEMENT_NODE) {
+					Element userElement = (Element) userNode;
+					
+					User user = new User();
+					user.setId(userElement.getAttribute(XmlAttribute.ID.getName()));
+					user.setName(userElement.getAttribute(XmlAttribute.NAME.getName()));
+					
+					String selectedState = userElement.getAttribute(XmlAttribute.SELECTED.getName());
+					boolean isSelected = Boolean.parseBoolean(selectedState);
+					user.setSelected(isSelected);
+					
+					users.add(user);
+				}
+			}
+		}
+
+		return users;
 	}
 	
 	/**
@@ -141,24 +173,46 @@ public class XmlParser {
 			rootElement.appendChild(childElement);
 		}
 	}
-	
-	
+
 	/**
-	 * Make an elements whose root tag is the "tag" and value is an element of "values".
-	 * @param tag
-	 * @param values
+	 * Make an element "issueKeyList" having children named "issueKey" 
+	 * whose value is a String value in the issueKeys passed by
+	 * @param issueKeys
 	 */
-	public void setValueList(final XmlTag tag, final List<String> values) {
-		if( tag != null && values != null && rootDocument != null ) {
-			Element childElement = rootDocument.createElement(tag.getName());
-			if( tag.hasChild() ) {
-				for( final String value : values ) {
-					Element nameElement = rootDocument.createElement(tag.getChildName());
-					nameElement.appendChild(rootDocument.createTextNode(value));
-					childElement.appendChild(nameElement);
-				}
+	public void setIssueKeys(final List<String> issueKeys) {
+		if ( rootElement != null && issueKeys != null ) {
+			Element issueKeyListElement = rootDocument.createElement(XmlTag.ISSUE_KEY_LIST.getName());
+			
+			for (final String issue : issueKeys) {
+				Element issueKeyElement = rootDocument.createElement(XmlTag.ISSUE_KEY.getName());
+				issueKeyElement.appendChild(rootDocument.createTextNode(issue));
+				
+				issueKeyListElement.appendChild(issueKeyElement);
 			}
-			rootElement.appendChild(childElement);
+				
+			rootElement.appendChild(issueKeyListElement);
+		}
+	}
+
+	/**
+	 * Make an element "userList" having children named "user"
+	 * whose attributes are in line with User information for each user
+	 * @param users
+	 */
+	public void setUsers(final List<User> users) {
+		if( rootElement != null && users != null ) {
+			Element userListElement = rootDocument.createElement(XmlTag.USER_LIST.getName());
+			
+			for (final User user : users) {
+				Element userElement = rootDocument.createElement(XmlTag.USER.getName());
+				userElement.setAttribute(XmlAttribute.ID.getName(), user.getId());
+				userElement.setAttribute(XmlAttribute.NAME.getName(), user.getName());
+				userElement.setAttribute(XmlAttribute.SELECTED.getName(), Boolean.toString(user.isSelected()));
+				
+				userListElement.appendChild(userElement);
+			}
+				
+			rootElement.appendChild(userListElement);
 		}
 	}
 

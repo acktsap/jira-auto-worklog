@@ -58,7 +58,7 @@ public class IssueKeyComboBox extends JComboBox<String> {
 	 * 
 	 * @param issues
 	 */
-	public void addIssues(final List<String> issues) {
+	public void setIssues(final List<String> issues) {
 		for (final String issue : issues) {
 			addItem(issue);
 		}

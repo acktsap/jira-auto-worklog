@@ -279,19 +279,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		loggerTextField.setText(xmlParser.getValue(XmlTag.AUTHOR));
 //		passwordTextField.setText(xmlFileParser.getValue(XmlParser.Tag.PASSWORD)); // no password for security
 
-		issueKeyComboBox.addIssues(xmlParser.getValueList(XmlTag.ISSUE_KEY_LIST));
-		
-		// TODO remove
-//		StringBuilder idListStringBuilder = new StringBuilder();
-//		List<String> userIdList = xmlFileController.getValueList(XmlTag.ID_LIST);
-//		for( int i = 0; i < userIdList.size(); ++i ) {
-//			if( i != 0 ) {
-//				idListStringBuilder.append(" ");
-//			}
-//			idListStringBuilder.append(userIdList.get(i));
-//		}
-		userIdListSelector.addUsers(xmlParser.getValueList(XmlTag.ID_LIST));
-		
+		issueKeyComboBox.setIssues(xmlParser.getIssueKeys());
+		userIdListSelector.setUsers(xmlParser.getUsers());
 //		setDate(xmlFileController.getValue(XmlParser.Tag.DATE));	// don't save date
 		timeSpentTextField.setText(xmlParser.getValue(XmlTag.TIME_SPENT));
 		commentTextArea.setText(xmlParser.getValue(XmlTag.COMMENT));
@@ -332,12 +321,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		xmlParser.setValue(XmlTag.AUTHOR, loggerTextField.getText());
 //		xmlFileController.setElementValue(XmlParser.Tag.PASSWORD, passwordTextField.getText());
 
-		xmlParser.setValueList(XmlTag.ISSUE_KEY_LIST, issueKeyComboBox.getIssues());
-		
-		// TODO remove
-//		String[] names = userIdListTextArea.getText().split(" ");
-//		List<String> idList = Arrays.asList(names);
-		xmlParser.setValueList(XmlTag.ID_LIST, userIdListSelector.getUsers());
+		xmlParser.setIssueKeys(issueKeyComboBox.getIssues());
+		xmlParser.setUsers(userIdListSelector.getUsers());
 //		xmlParser.setElementValue(XmlParser.Tag.DATE, getDate());
 		xmlParser.setValue(XmlTag.TIME_SPENT, timeSpentTextField.getText());
 		xmlParser.setValue(XmlTag.COMMENT, commentTextArea.getText());
@@ -424,31 +409,14 @@ public class MainFrame extends JFrame implements ActionListener {
 		loggingData.setIssuekey(issueKeyComboBox.getCurrentIssueKey());
 //		loggingData.setRemainingEstimateSeconds(0);
 		
-		loggingData.setUserList(userIdListSelector.getUsers());
+		loggingData.setUserList(userIdListSelector.getSelectedUsers());
 		loggingData.setDateStarted(getDate());
 		String timeSpent = timeSpentTextField.getText();
 		loggingData.setTimeSpentSeconds(TimeFormatter.timeToSeconds(timeSpent));
 		loggingData.setComment(commentTextArea.getText());
 		
-//		System.out.println("Issue key : " + loggingData.getIssuekey());
-//		System.out.print("Name list : ");
-//		for( String name : loggingData.getNameList() ) {
-//			System.out.print(name + " ");
-//		}
-//		System.out.println();
-//		System.out.println("Date : " + loggingData.getDateStarted());
-//		System.out.println("Time spent seconds : " + loggingData.getTimeSpentSeconds());
-//		System.out.println("Comment : " + loggingData.getComment());
-		
 		return loggingData;
 	}
-
-	// TODO remove
-//	private List<String> getNameList() {
-//		String[] nameListArray = userIdListTextArea.getText().split(" ");
-//		List<String> nameList = new ArrayList<String>(Arrays.asList(nameListArray));
-//		return nameList;
-//	}
 
 	private String getDate() {
 		DateModel<?> dateModel = datePicker.getModel();
