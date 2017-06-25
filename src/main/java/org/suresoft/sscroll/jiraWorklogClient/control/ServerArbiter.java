@@ -113,6 +113,7 @@ public class ServerArbiter {
 				failedList.add(authorName);
 			}
 		}
+		
 		return failedList;
 	}
 

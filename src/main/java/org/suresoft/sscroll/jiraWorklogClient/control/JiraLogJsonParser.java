@@ -56,7 +56,7 @@ public class JiraLogJsonParser extends JSONParser {
 
 			// author
 			JSONObject author = new JSONObject();
-			author.put(JSON_AUTHOR_NAME, loggingData.getUserList().get(i));
+			author.put(JSON_AUTHOR_NAME, loggingData.getUserList().get(i).getId());
 			jsonObject.put(JSON_AUTHOR, author);
 			
 			// ISSUE_ISSUETYPE
