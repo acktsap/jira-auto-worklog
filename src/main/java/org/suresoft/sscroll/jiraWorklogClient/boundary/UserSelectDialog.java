@@ -174,7 +174,23 @@ public class UserSelectDialog extends JDialog implements ActionListener {
 	}
 
 	private void confirmButtonClicked() {
-		// TODO
+		List<User> newUsers = new ArrayList<User>();
+		
+		Component[] checkBoxes = checkBoxPanel.getComponents();
+		for (final Component component : checkBoxes) {
+			JCheckBox checkBox = (JCheckBox) component;
+			
+			User user = new User();
+			user.setId(checkBox.getName());
+			user.setName(checkBox.getText());
+			user.setSelected(checkBox.isSelected());
+			
+			newUsers.add(user);
+		}
+		
+		UserSelector userSelector = ((MainFrame) getParent()).getUserSelector();
+		userSelector.setUsers(newUsers);
+		
 		dispose();
 	}
 	
