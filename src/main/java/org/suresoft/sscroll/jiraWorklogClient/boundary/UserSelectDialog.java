@@ -42,7 +42,6 @@ public class UserSelectDialog extends JDialog implements ActionListener {
 	
 	private JButton addButton;
 	private JButton removeButton;
-	private JButton modifyButton;
 	
 	private JButton confirmButton;
 	private JButton cancelButton;
@@ -115,11 +114,6 @@ public class UserSelectDialog extends JDialog implements ActionListener {
 		removeButton.setMargin(insets);
 		leftButtonsPanel.add(removeButton);
 		
-		modifyButton = new JButton("Modify");
-		modifyButton.addActionListener(this);
-		modifyButton.setMargin(insets);
-		leftButtonsPanel.add(modifyButton);
-		
 		return leftButtonsPanel;
 	}
 
@@ -150,8 +144,6 @@ public class UserSelectDialog extends JDialog implements ActionListener {
 			addButtonClicked();
 		} else if( source == removeButton ) {
 			removeButtonClicked();
-		} else if( source == modifyButton ) {
-			modifyButtonClicked();
 		} else if (source == confirmButton) {
 			confirmButtonClicked();
 		} else if ( source == cancelButton ){
@@ -197,11 +189,6 @@ public class UserSelectDialog extends JDialog implements ActionListener {
 			checkBoxPanel.validate();
 			checkBoxPanel.repaint();
 		}
-	}
-
-	private void modifyButtonClicked() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	private void confirmButtonClicked() {
