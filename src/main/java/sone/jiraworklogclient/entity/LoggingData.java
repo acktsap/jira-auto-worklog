@@ -74,19 +74,24 @@ public class LoggingData implements EntityInterface {
 
 	@Override
 	public String getSummary() {
-		StringBuffer summaryBuffer = new StringBuffer();
+		StringBuilder summaryBuilder = new StringBuilder();
 
-		summaryBuffer.append("Issue key : " + getIssuekey() + "\n");
-		summaryBuffer.append("User list : ");
-		for (final User user : getUserList()) {
-			summaryBuffer.append(user.getName() + " ");
+		summaryBuilder.append("Issue key : " + getIssuekey() + "\n");
+		
+		final List<User> userList = getUserList();
+		summaryBuilder.append("User list(");
+		summaryBuilder.append(userList.size());
+		summaryBuilder.append(") : ");
+		
+		for (final User user : userList) {
+			summaryBuilder.append(user.getName() + " ");
 		}
-		summaryBuffer.append("\n");
-		summaryBuffer.append("Date : " + getDateStarted() + "\n");
-		summaryBuffer.append("Time spent : " + TimeFormatter.secondToTime(getTimeSpentSeconds()) + "\n");
-		summaryBuffer.append("Comment : " + getComment() + "\n");
-
-		return summaryBuffer.toString();
+		
+		summaryBuilder.append("\n");
+		summaryBuilder.append("Date : " + getDateStarted() + "\n");
+		summaryBuilder.append("Time spent : " + TimeFormatter.secondToTime(getTimeSpentSeconds()) + "\n");
+		summaryBuilder.append("Comment : " + getComment() + "\n");
+		return summaryBuilder.toString();
 	}
 
 }
