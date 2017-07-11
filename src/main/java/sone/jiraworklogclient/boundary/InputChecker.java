@@ -159,7 +159,7 @@ class IssueKeyChecker extends InputChecker {
 	
 	@Override
 	protected Pattern getPattern() {
-		return Pattern.compile("^\\w+-[1-9][0-9]* - \\S(.*\\S)*$");
+		return Pattern.compile("^\\w+-[1-9][0-9]* : \\S(.*\\S)*$");
 	}
 
 	@Override
@@ -169,7 +169,7 @@ class IssueKeyChecker extends InputChecker {
 	
 	@Override
 	protected String getRightExample() {
-		return "ex) KP-27 - Suicide";
+		return "ex) KP-27 : Suicide";
 	}
 
 }

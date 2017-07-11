@@ -104,7 +104,7 @@ public class IssueKeyComboBox extends JComboBox<String> {
 	 * @return issue key
 	 */
 	private String extractKey(final String rawIssueKey) {
-		return rawIssueKey.split(" - ")[0];
+		return rawIssueKey.split(" : ")[0];
 	}
 
 	/**
