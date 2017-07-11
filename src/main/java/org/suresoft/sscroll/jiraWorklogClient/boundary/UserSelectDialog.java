@@ -20,6 +20,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -160,8 +161,23 @@ public class UserSelectDialog extends JDialog implements ActionListener {
 	}
 
 	private void addButtonClicked() {
-		// TODO Auto-generated method stub
-		
+		JTextField userId = new JTextField();
+		JTextField userName = new JTextField();
+		Object[] message = {
+		    "User Id :", userId,
+		    "User Name :", userName
+		};
+
+		if (JOptionPane.showConfirmDialog(null, message, "Type user id & name",
+				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+			JCheckBox checkBox = new JCheckBox();
+			checkBox.setName(userId.getText());
+			checkBox.setText(userName.getText());
+			
+			checkBoxPanel.add(checkBox);
+			checkBoxPanel.validate();
+			checkBoxPanel.repaint();
+		}
 	}
 
 	private void removeButtonClicked() {
