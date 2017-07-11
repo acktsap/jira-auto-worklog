@@ -1,4 +1,4 @@
-package org.suresoft.sscroll.jiraWorklogClient.boundary;
+package sone.jiraworklogclient.boundary;
 
 import java.awt.Component;
 import java.awt.Dimension;

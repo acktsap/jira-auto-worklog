@@ -1,4 +1,4 @@
-package org.suresoft.sscroll.jiraWorklogClient.boundary;
+package sone.jiraworklogclient.boundary;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import org.suresoft.sscroll.jiraWorklogClient.entity.User;
+import sone.jiraworklogclient.entity.User;
 
 public class UserSelector extends JPanel {
 	/**

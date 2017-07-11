@@ -1,4 +1,4 @@
-package org.suresoft.sscroll.jiraWorklogClient.boundary;
+package sone.jiraworklogclient.boundary;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -33,13 +33,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-import org.suresoft.sscroll.jiraWorklogClient.control.JiraWorklogClientException.MakeSessionFailedException;
-import org.suresoft.sscroll.jiraWorklogClient.control.ServerArbiter;
-import org.suresoft.sscroll.jiraWorklogClient.control.XmlParser;
-import org.suresoft.sscroll.jiraWorklogClient.control.XmlTag;
-import org.suresoft.sscroll.jiraWorklogClient.entity.LoggerInfo;
-import org.suresoft.sscroll.jiraWorklogClient.entity.LoggingData;
-import org.suresoft.sscroll.jiraWorklogClient.entity.ServerInfo;
+import sone.jiraworklogclient.control.JiraWorklogClientException.MakeSessionFailedException;
+import sone.jiraworklogclient.control.ServerArbiter;
+import sone.jiraworklogclient.control.XmlParser;
+import sone.jiraworklogclient.control.XmlTag;
+import sone.jiraworklogclient.entity.LoggerInfo;
+import sone.jiraworklogclient.entity.LoggingData;
+import sone.jiraworklogclient.entity.ServerInfo;
 
 import net.sourceforge.jdatepicker.DateModel;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;

@@ -1,8 +1,8 @@
-package org.suresoft.sscroll.jiraWorklogClient.boundary;
+package sone.jiraworklogclient.boundary;
 
 import javax.swing.JOptionPane;
 
-import org.suresoft.sscroll.jiraWorklogClient.entity.EntityInterface;
+import sone.jiraworklogclient.entity.EntityInterface;
 
 public class ConfirmAlertBox {
 	/**

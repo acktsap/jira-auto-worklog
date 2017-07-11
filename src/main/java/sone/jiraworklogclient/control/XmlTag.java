@@ -1,4 +1,4 @@
-package org.suresoft.sscroll.jiraWorklogClient.control;
+package sone.jiraworklogclient.control;
 
 public enum XmlTag {
 	

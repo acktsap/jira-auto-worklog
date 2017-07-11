@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.suresoft.sscroll.jiraWorklogClient</groupId>
+	<groupId>sone.jiraworklogclient</groupId>
 	<artifactId>jira-worklog-client</artifactId>
 	<packaging>jar</packaging>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.0-SNAPSHOT</version>
 
 	<properties>
 		<jdk.version>1.6</jdk.version>
@@ -52,7 +52,7 @@
 					<!-- MainClass -->
 					<archive>
 						<manifest>
-							<mainClass>org.suresoft.sscroll.jiraWorklogClient.boundary.MainFrame</mainClass>
+							<mainClass>sone.jiraworklogclient.boundary.MainFrame</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

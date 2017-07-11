@@ -1,4 +1,4 @@
-package org.suresoft.sscroll.jiraWorklogClient.entity;
+package sone.jiraworklogclient.entity;
 
 public class ServerInfo implements EntityInterface {
 	private String ip;

@@ -1,4 +1,4 @@
-package org.suresoft.sscroll.jiraWorklogClient.boundary;
+package sone.jiraworklogclient.boundary;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -25,7 +25,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-import org.suresoft.sscroll.jiraWorklogClient.entity.User;
+import sone.jiraworklogclient.entity.User;
 
 public class UserSelectDialog extends JDialog implements ActionListener {
 

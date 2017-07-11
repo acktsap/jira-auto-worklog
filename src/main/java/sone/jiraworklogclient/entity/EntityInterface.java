@@ -1,4 +1,4 @@
-package org.suresoft.sscroll.jiraWorklogClient.entity;
+package sone.jiraworklogclient.entity;
 
 public interface EntityInterface {
 	public String getSummary();
