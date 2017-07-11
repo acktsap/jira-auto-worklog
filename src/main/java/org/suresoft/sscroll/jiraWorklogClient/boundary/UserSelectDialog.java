@@ -18,6 +18,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
@@ -57,7 +58,7 @@ public class UserSelectDialog extends JDialog implements ActionListener {
 		pack();
 		setVisible(true);
 	}
-	
+
 	private JComponent buildCheckboxPanel() {
 		checkBoxPanel = new JPanel();
 		checkBoxPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -164,8 +165,22 @@ public class UserSelectDialog extends JDialog implements ActionListener {
 	}
 
 	private void removeButtonClicked() {
-		// TODO Auto-generated method stub
-		
+		if (JOptionPane.showOptionDialog(null, "Wanna remove?", "Remove?", JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE, null, null, null) == JOptionPane.YES_OPTION) {
+
+			Component[] checkBoxes = checkBoxPanel.getComponents();
+			for (final Component component : checkBoxes) {
+				JCheckBox checkBox = (JCheckBox) component;
+
+				if (checkBox.isSelected()) {
+					checkBoxPanel.remove(checkBox);
+				}
+			}
+			
+			// need after removing some component
+			checkBoxPanel.validate();
+			checkBoxPanel.repaint();
+		}
 	}
 
 	private void modifyButtonClicked() {
@@ -179,17 +194,17 @@ public class UserSelectDialog extends JDialog implements ActionListener {
 		Component[] checkBoxes = checkBoxPanel.getComponents();
 		for (final Component component : checkBoxes) {
 			JCheckBox checkBox = (JCheckBox) component;
-			
+		
 			User user = new User();
 			user.setId(checkBox.getName());
 			user.setName(checkBox.getText());
 			user.setSelected(checkBox.isSelected());
-			
+		
 			newUsers.add(user);
 		}
 		
 		UserSelector userSelector = ((MainFrame) getParent()).getUserSelector();
-		userSelector.setUsers(newUsers);
+		userSelector.setUsers(newUsers);	
 		
 		dispose();
 	}
